@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add New Case - Legal Vector Search</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --accent-color: #6366f1;
+            --accent-hover: #4f46e5;
+            --dark-bg: #0f0f23;
+            --card-bg: #1a1b3a;
+            --text-primary: #e2e8f0;
+            --text-secondary: #94a3b8;
+            --border-color: #334155;
+            --glow-color: rgba(99, 102, 241, 0.5);
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background: var(--dark-bg);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        /* Navbar Styles */
+        .navbar {
+            background: rgba(26, 27, 58, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .navbar-brand {
+            font-family: 'Inter', sans-serif;
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: var(--accent-color) !important;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .navbar-brand:hover {
+            transform: translateY(-2px);
+            color: var(--accent-hover) !important;
+        }
+
+        .navbar-brand i {
+            font-size: 1.8rem;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Page Header */
+        .page-header-section {
+            padding: 3rem 0 2rem;
+            background: radial-gradient(ellipse at center, rgba(99, 102, 241, 0.1) 0%, transparent 70%);
+            position: relative;
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+            animation: slideUp 1s ease-out;
+        }
+
+        .page-subtitle {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            animation: slideUp 1s ease-out 0.2s both;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Form Styles */
+        .form-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem 0;
+        }
+
+        .form-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 3rem;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+            animation: slideUp 1s ease-out 0.4s both;
+        }
+
+        .form-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--primary-gradient);
+        }
+
+        .form-section {
+            margin-bottom: 2.5rem;
+        }
+
+        .section-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .section-title i {
+            color: var(--accent-color);
+            font-size: 1.2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            color: var(--text-primary);
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .form-label i {
+            color: var(--accent-color);
+            font-size: 0.9rem;
+        }
+
+        .form-control, .form-select {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            padding: 0.75rem 1rem;
+            color: var(--text-primary);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .form-control:focus, .form-select:focus {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: var(--accent-color);
+            box-shadow: 0 0 20px var(--glow-color);
+            color: var(--text-primary);
+            outline: none;
+        }
+
+        .form-control::placeholder {
+            color: var(--text-secondary);
+        }
+
+        textarea.form-control {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .form-text {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
+        }
+
+        .form-text i {
+            margin-right: 0.25rem;
+        }
+
+        /* Button Styles */
+        .btn-group-custom {
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .btn-primary-custom {
+            background: var(--primary-gradient);
+            border: none;
+            border-radius: 12px;
+            padding: 0.875rem 2.5rem;
+            font-weight: 600;
+            font-size: 1rem;
+            color: white;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .btn-primary-custom::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .btn-primary-custom:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary-custom:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.4);
+        }
+
+        .btn-secondary-custom {
+            background: transparent;
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            padding: 0.875rem 2rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            transition: all 0.3s ease;
+            flex: 0 0 auto;
+        }
+
+        .btn-secondary-custom:hover {
+            border-color: var(--accent-color);
+            color: var(--accent-color);
+            transform: translateY(-2px);
+        }
+
+        /* Success/Error States */
+        .alert-custom {
+            border-radius: 12px;
+            border: none;
+            padding: 1rem 1.5rem;
+            margin-bottom: 2rem;
+            animation: slideDown 0.5s ease-out;
+        }
+
+        .alert-success-custom {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success-color);
+            border-left: 4px solid var(--success-color);
+        }
+
+        .alert-warning-custom {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--warning-color);
+            border-left: 4px solid var(--warning-color);
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .form-card {
+                padding: 2rem 1.5rem;
+                margin: 1rem;
+            }
+            
+            .page-title {
+                font-size: 2rem;
+            }
+            
+            .btn-group-custom {
+                flex-direction: column;
+            }
+            
+            .btn-primary-custom {
+                min-width: auto;
+            }
+        }
+
+        /* Loading States */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(15, 15, 35, 0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .loading-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .loading-content {
+            text-align: center;
+            color: var(--text-primary);
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid var(--border-color);
+            border-radius: 50%;
+            border-top-color: var(--accent-color);
+            animation: spin 1s ease-in-out infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">
+                <i class="fas fa-balance-scale"></i>
+                LegalSearch Pro Admin
+            </a>
+        </div>
+    </nav>
+    
+    <!-- Page Header -->
+    <section class="page-header-section">
+        <div class="container">
+            <h1 class="page-title">Add New Legal Case</h1>
+            <p class="page-subtitle">Submit a new case to the legal database for semantic search indexing</p>
+        </div>
+    </section>
+    
+    <!-- Main Content -->
+    <main class="container">
+        <div class="form-container">
+            <div id="alertContainer"></div>
+            
+            <form id="addCaseForm" class="form-card">
+                <!-- Basic Information Section -->
+                <div class="form-section">
+                    <h3 class="section-title">
+                        <i class="fas fa-info-circle"></i>
+                        Basic Information
+                    </h3>
+                    
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <div class="form-group">
+                                <label for="caseTitle" class="form-label">
+                                    <i class="fas fa-file-alt"></i>
+                                    Case Title *
+                                </label>
+                                <input type="text" class="form-control" id="caseTitle" 
+                                       placeholder="e.g., Plaintiff vs. Defendant" required>
+                                <div class="form-text">
+                                    <i class="fas fa-info"></i>
+                                    Enter the full legal case title as it appears in official documents
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-12">
+                            <div class="form-group">
+                                <label for="caseDescription" class="form-label">
+                                    <i class="fas fa-align-left"></i>
+                                    Case Description *
+                                </label>
+                                <textarea class="form-control" id="caseDescription" rows="6" 
+                                         placeholder="Provide a comprehensive description of the case, including key facts, legal issues, and outcomes..." required></textarea>
+                                <div class="form-text">
+                                    <i class="fas fa-lightbulb"></i>
+                                    This description will be used for semantic matching. Include relevant legal concepts, facts, and precedents.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Parties and Personnel Section -->
+                <div class="form-section">
+                    <h3 class="section-title">
+                        <i class="fas fa-users"></i>
+                        Parties & Personnel
+                    </h3>
+                    
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="plaintiff" class="form-label">
+                                    <i class="fas fa-user"></i>
+                                    Plaintiff(s)
+                                </label>
+                                <input type="text" class="form-control" id="plaintiff" 
+                                       placeholder="Enter plaintiff names">
+                                <div class="form-text">
+                                    <i class="fas fa-info"></i>
+                                    Separate multiple names with commas
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="defendant" class="form-label">
+                                    <i class="fas fa-user-shield"></i>
+                                    Defendant(s)
+                                </label>
+                                <input type="text" class="form-control" id="defendant" 
+                                       placeholder="Enter defendant names">
+                                <div class="form-text">
+                                    <i class="fas fa-info"></i>
+                                    Separate multiple names with commas
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="judges" class="form-label">
+                                    <i class="fas fa-gavel"></i>
+                                    Presiding Judge(s)
+                                </label>
+                                <input type="text" class="form-control" id="judges" 
+                                       placeholder="Enter judge names">
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="lawyers" class="form-label">
+                                    <i class="fas fa-briefcase"></i>
+                                    Legal Counsel
+                                </label>
+                                <input type="text" class="form-control" id="lawyers" 
+                                       placeholder="Enter lawyer/firm names">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Legal Details Section -->
+                <div class="form-section">
+                    <h3 class="section-title">
+                        <i class="fas fa-balance-scale"></i>
+                        Legal Details
+                    </h3>
+                    
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="court" class="form-label">
+                                    <i class="fas fa-building"></i>
+                                    Court/Jurisdiction
+                                </label>
+                                <input type="text" class="form-control" id="court" 
+                                       placeholder="e.g., Supreme Court of India">
+                                <div class="form-text">
+                                    <i class="fas fa-info"></i>
+                                    Specify the court where the case was heard
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="caseNumber" class="form-label">
+                                    <i class="fas fa-hashtag"></i>
+                                    Case Number
+                                </label>
+                                <input type="text" class="form-control" id="caseNumber" 
+                                       placeholder="Enter official case number">
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="dateDecided" class="form-label">
+                                    <i class="fas fa-calendar"></i>
+                                    Date Decided
+                                </label>
+                                <input type="date" class="form-control" id="dateDecided">
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="caseType" class="form-label">
+                                    <i class="fas fa-tag"></i>
+                                    Case Type
+                                </label>
+                                <select class="form-select" id="caseType">
+                                    <option value="">Select case type</option>
+                                    <option value="civil">Civil</option>
+                                    <option value="criminal">Criminal</option>
+                                    <option value="constitutional">Constitutional</option>
+                                    <option value="commercial">Commercial</option>
+                                    <option value="family">Family</option>
+                                    <option value="intellectual-property">Intellectual Property</option>
+                                    <option value="labor">Labor</option>
+                                    <option value="tax">Tax</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="col-12">
+                            <div class="form-group">
+                                <label for="lawSections" class="form-label">
+                                    <i class="fas fa-book"></i>
+                                    Applicable Law Sections
+                                </label>
+                                <input type="text" class="form-control" id="lawSections" 
+                                       placeholder="e.g., The Patents Act 1970 Section 48, IPC Section 379">
+                                <div class="form-text">
+                                    <i class="fas fa-info"></i>
+                                    List relevant legal sections, acts, and statutes separated by commas
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-12">
+                            <div class="form-group">
+                                <label for="keywords" class="form-label">
+                                    <i class="fas fa-tags"></i>
+                                    Keywords/Tags
+                                </label>
+                                <input type="text" class="form-control" id="keywords" 
+                                       placeholder="e.g., intellectual property, patent infringement, AI, technology">
+                                <div class="form-text">
+                                    <i class="fas fa-info"></i>
+                                    Add relevant keywords to improve searchability
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="btn-group-custom">
+                    <button type="submit" class="btn-primary-custom">
+                        <i class="fas fa-plus-circle me-2"></i>
+                        Add Case to Database
+                    </button>
+                    <button type="reset" class="btn-secondary-custom">
+                        <i class="fas fa-undo me-2"></i>
+                        Reset Form
+                    </button>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <h4>Processing Case Data...</h4>
+            <p>Adding case to the legal database</p>
+        </div>
+    </div>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Form submission handler
+        document.getElementById('addCaseForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            
+            // Show loading overlay
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            loadingOverlay.classList.add('show');
+            
+            // Gather form data
+            const formData = {
+                caseTitle: document.getElementById('caseTitle').value.trim(),
+                caseDescription: document.getElementById('caseDescription').value.trim(),
+                plaintiff: document.getElementById('plaintiff').value.trim(),
+                defendant: document.getElementById('defendant').value.trim(),
+                judges: document.getElementById('judges').value.trim(),
+                lawyers: document.getElementById('lawyers').value.trim(),
+                court: document.getElementById('court').value.trim(),
+                caseNumber: document.getElementById('caseNumber').value.trim(),
+                dateDecided: document.getElementById('dateDecided').value,
+                caseType: document.getElementById('caseType').value,
+                lawSections: document.getElementById('lawSections').value.trim(),
+                keywords: document.getElementById('keywords').value.trim()
+            };
+            
+            // Validate required fields
+            if (!formData.caseTitle || !formData.caseDescription) {
+                showAlert('Please fill in all required fields.', 'warning');
+                loadingOverlay.classList.remove('show');
+                return;
+            }
+            
+            // Simulate API call
+            setTimeout(() => {
+                loadingOverlay.classList.remove('show');
+                
+                // In a real application, you would send this data to your backend:
+                // fetch('/api/cases', {
+                //     method: 'POST',
+                //     headers: { 'Content-Type': 'application/json' },
+                //     body: JSON.stringify(formData)
+                // })
+                // .then(response => response.json())
+                // .then(data => {
+                //     if (data.success) {
+                //         showAlert('Case successfully added to the database!', 'success');
+                //         document.getElementById('addCaseForm').reset();
+                //     } else {
+                //         showAlert('Error adding case. Please try again.', 'error');
+                //     }
+                // })
+                // .catch(error => {
+                //     showAlert('Network error. Please check your connection.', 'error');
+                // });
+                
+                console.log('Case data ready for database:', formData);
+                showAlert(
+                    'Form data captured successfully! Connect your SQL/MongoDB database to save this case data. Check the console for the formatted data object.', 
+                    'success'
+                );
+                
+                // Reset form after successful submission
+                setTimeout(() => {
+                    document.getElementById('addCaseForm').reset();
+                }, 2000);
+                
+            }, 2500); // Simulate network delay
+        });
+
+        // Reset form handler
+        document.getElementById('addCaseForm').addEventListener('reset', function() {
+            clearAlerts();
+            showAlert('Form has been reset.', 'info');
+        });
+
+        // Show alert function
+        function showAlert(message, type = 'info') {
+            const alertContainer = document.getElementById('alertContainer');
+            const alertClass = type === 'success' ? 'alert-success-custom' : 
+                              type === 'warning' ? 'alert-warning-custom' : 
+                              'alert-warning-custom';
+            
+            const alertHtml = `
+                <div class="alert-custom ${alertClass}">
+                    <i class="fas ${getAlertIcon(type)} me-2"></i>
+                    ${message}
+                    <button type="button" class="btn-close" style="float: right;" onclick="this.parentElement.remove()"></button>
+                </div>
+            `;
+            
+            alertContainer.innerHTML = alertHtml;
+            
+            // Auto-remove after 5 seconds
+            setTimeout(() => {
+                const alert = alertContainer.querySelector('.alert-custom');
+                if (alert) {
+                    alert.style.animation = 'slideUp 0.5s ease-out reverse';
+                    setTimeout(() => alert.remove(), 500);
+                }
+            }, 5000);
+        }
+
+        // Get alert icon based on type
+        function getAlertIcon(type) {
+            switch(type) {
+                case 'success': return 'fa-check-circle';
+                case 'warning': return 'fa-exclamation-triangle';
+                case 'error': return 'fa-times-circle';
+                default: return 'fa-info-circle';
+            }
+        }
+
+        // Clear all alerts
+        function clearAlerts() {
+            document.getElementById('alertContainer').innerHTML = '';
+        }
+
+        // Add input focus animations
+        document.querySelectorAll('.form-control, .form-select').forEach(input => {
+            input.addEventListener('focus', function() {
+                this.parentElement.style.transform = 'translateY(-2px)';
+                this.parentElement.style.transition = 'transform 0.3s ease';
+            });
+            
+            input.addEventListener('blur', function() {
+                this.parentElement.style.transform = 'translateY(0)';
+            });
+        });
+
+        // Character counter for description
+        const descriptionField = document.getElementById('caseDescription');
+        if (descriptionField) {
+            const maxLength = 2000;
+            const counter = document.createElement('div');
+            counter.className = 'form-text';
+            counter.style.textAlign = 'right';
+            counter.innerHTML = `<i class="fas fa-edit"></i> 0 / ${maxLength} characters`;
+            
+            descriptionField.parentElement.appendChild(counter);
+            
+            descriptionField.addEventListener('input', function() {
+                const length = this.value.length;
+                counter.innerHTML = `<i class="fas fa-edit"></i> ${length} / ${maxLength} characters`;
+                
+                if (length > maxLength * 0.9) {
+                    counter.style.color = 'var(--warning-color)';
+                } else {
+                    counter.style.color = 'var(--text-secondary)';
+                }
+            });
+        }
+    </script>
+</body>
+</html>

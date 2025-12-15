@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Help Center - LegalSearch Pro</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --accent-color: #6366f1;
+            --bg-primary: #0f0f23;
+            --bg-secondary: #1a1b3a;
+            --card-bg: #1a1b3a;
+            --text-primary: #ffffff;
+            --text-secondary: #a0aec0;
+            --border-color: rgba(255, 255, 255, 0.1);
+            --warning-color: #f59e0b;
+            --success-color: #10b981;
+            --error-color: #ef4444;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        /* Navigation */
+        .navbar {
+            background: var(--card-bg) !important;
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: var(--text-primary) !important;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .navbar-brand i {
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 1.75rem;
+        }
+
+        .nav-link {
+            color: var(--text-secondary) !important;
+            font-weight: 500;
+            position: relative;
+            transition: all 0.3s ease;
+            padding: 0.5rem 1rem !important;
+            border-radius: 10px;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            color: var(--accent-color) !important;
+            background: rgba(99, 102, 241, 0.1);
+        }
+
+        /* Page Header */
+        .page-header-section {
+            padding: 4rem 0 3rem;
+            background: radial-gradient(ellipse at center, rgba(99, 102, 241, 0.15) 0%, transparent 70%);
+            position: relative;
+            text-align: center;
+        }
+
+        .page-title {
+            font-size: 3rem;
+            font-weight: 700;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1rem;
+            animation: slideUp 1s ease-out;
+        }
+
+        .page-subtitle {
+            color: var(--text-secondary);
+            font-size: 1.25rem;
+            max-width: 600px;
+            margin: 0 auto;
+            animation: slideUp 1s ease-out 0.2s both;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Help Content */
+        .help-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+
+        .faq-section {
+            margin-bottom: 3rem;
+        }
+
+        .section-title {
+            font-size: 1.75rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .section-title i {
+            color: var(--accent-color);
+        }
+
+        /* Custom Accordion */
+        .accordion {
+            border: none;
+        }
+
+        .accordion-item {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 15px;
+            margin-bottom: 1rem;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            animation: slideUp 1s ease-out calc(0.1s * var(--item-index)) both;
+        }
+
+        .accordion-item:hover {
+            border-color: var(--accent-color);
+            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.1);
+        }
+
+        .accordion-header {
+            border: none;
+        }
+
+        .accordion-button {
+            background: transparent;
+            border: none;
+            color: var(--text-primary);
+            font-weight: 600;
+            font-size: 1.1rem;
+            padding: 1.5rem;
+            position: relative;
+        }
+
+        .accordion-button:not(.collapsed) {
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--accent-color);
+            box-shadow: none;
+        }
+
+        .accordion-button:focus {
+            box-shadow: none;
+            border: none;
+        }
+
+        .accordion-button::after {
+            background: none;
+            border: 2px solid var(--accent-color);
+            border-radius: 2px;
+            border-left: 0;
+            border-top: 0;
+            transform: rotate(45deg);
+            width: 8px;
+            height: 8px;
+            transition: transform 0.3s ease;
+        }
+
+        .accordion-button:not(.collapsed)::after {
+            transform: rotate(-135deg);
+        }
+
+        .accordion-body {
+            background: var(--card-bg);
+            color: var(--text-secondary);
+            padding: 1.5rem;
+            border-top: 1px solid var(--border-color);
+            line-height: 1.7;
+        }
+
+        /* Contact Card */
+        .contact-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 3rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            animation: slideUp 1s ease-out 0.6s both;
+        }
+
+        .contact-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--primary-gradient);
+        }
+
+        .contact-icon {
+            font-size: 3rem;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1.5rem;
+        }
+
+        .btn-contact {
+            background: var(--primary-gradient);
+            border: none;
+            border-radius: 12px;
+            padding: 0.875rem 2rem;
+            font-weight: 600;
+            font-size: 1rem;
+            color: white;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-contact:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.4);
+            color: white;
+        }
+
+        /* Search Tips */
+        .search-tips {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+            border: 1px solid var(--border-color);
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .tip-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .tip-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .tip-icon {
+            color: var(--accent-color);
+            font-size: 1.25rem;
+            margin-top: 0.25rem;
+        }
+
+        .tip-content h5 {
+            color: var(--text-primary);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .tip-content p {
+            color: var(--text-secondary);
+            margin-bottom: 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">
+                <i class="fas fa-balance-scale"></i>
+                LegalSearch Pro
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="index.html">Search Cases</a></li>
+                    <li class="nav-item"><a class="nav-link" href="browse.html">Browse</a></li>
+                    <li class="nav-item"><a class="nav-link" href="recent-searches.html">Recent Searches</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="help.html">Help</a></li>
+                    <li class="nav-item"><a class="nav-link" href="profile.html">My Account</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <section class="page-header-section">
+        <div class="container">
+            <h1 class="page-title">Help Center</h1>
+            <p class="page-subtitle">Everything you need to know about using LegalSearch Pro for semantic legal research</p>
+        </div>
+    </section>
+
+    <main class="container">
+        <div class="help-container">
+            <!-- Search Tips -->
+            <div class="search-tips">
+                <h3 style="color: var(--text-primary); margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.75rem;">
+                    <i class="fas fa-lightbulb" style="color: var(--warning-color);"></i>
+                    Pro Search Tips
+                </h3>
+                
+                <div class="tip-item">
+                    <i class="fas fa-search tip-icon"></i>
+                    <div class="tip-content">
+                        <h5>Use Natural Language</h5>
+                        <p>Instead of keywords, describe what you're looking for: "cases about contract disputes in construction projects"</p>
+                    </div>
+                </div>
+                
+                <div class="tip-item">
+                    <i class="fas fa-brain tip-icon"></i>
+                    <div class="tip-content">
+                        <h5>Think Conceptually</h5>
+                        <p>Our AI understands context and meaning, so search for concepts rather than exact phrases</p>
+                    </div>
+                </div>
+                
+                <div class="tip-item">
+                    <i class="fas fa-star tip-icon"></i>
+                    <div class="tip-content">
+                        <h5>Check Similarity Scores</h5>
+                        <p>Higher scores (85%+) indicate stronger semantic matches to your query</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FAQ Section -->
+            <div class="faq-section">
+                <h2 class="section-title">
+                    <i class="fas fa-question-circle"></i>
+                    Frequently Asked Questions
+                </h2>
+                
+                <div class="accordion" id="faqAccordion">
+                    <div class="accordion-item" style="--item-index: 1">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne">
+                                <i class="fas fa-magic me-3" style="color: var(--accent-color);"></i>
+                                How does Semantic Search work?
+                            </button>
+                        </h2>
+                        <div id="collapseOne" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                Our system uses advanced AI Language Models to convert your search query and all legal cases into numerical representations called 'vector embeddings'. It then finds cases whose embeddings are mathematically closest to your query's embedding, resulting in a search that understands context and meaning, not just keywords.
+                                <br><br>
+                                This allows you to search using natural language descriptions and find relevant cases even when they don't contain your exact search terms.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="accordion-item" style="--item-index: 2">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo">
+                                <i class="fas fa-percent me-3" style="color: var(--accent-color);"></i>
+                                What does the similarity score mean?
+                            </button>
+                        </h2>
+                        <div id="collapseTwo" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                The similarity score (e.g., 92%) represents how contextually similar a case is to your search query, based on our AI's understanding. A higher score indicates a stronger semantic relationship. It helps you quickly identify the most relevant documents.
+                                <br><br>
+                                <strong>Score Guide:</strong>
+                                <ul style="margin-top: 1rem;">
+                                    <li>90-100%: Highly relevant matches</li>
+                                    <li>80-89%: Very relevant matches</li>
+                                    <li>70-79%: Moderately relevant matches</li>
+                                    <li>Below 70%: May be less relevant</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item" style="--item-index: 3">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree">
+                                <i class="fas fa-book-open me-3" style="color: var(--accent-color);"></i>
+                                How do I save and organize my research?
+                            </button>
+                        </h2>
+                        <div id="collapseThree" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                LegalSearch Pro helps you organize your legal research effectively:
+                                <ul style="margin-top: 1rem;">
+                                    <li><strong>Search History:</strong> All your searches are automatically saved and accessible from "Recent Searches"</li>
+                                    <li><strong>Bookmarks:</strong> Save important cases for quick access later</li>
+                                    <li><strong>Notes:</strong> Add personal notes to cases and precedents</li>
+                                    <li><strong>Collections:</strong> Organize cases into custom folders and categories</li>
+                                </ul>
+                                Access all these features through your account dashboard.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item" style="--item-index: 4">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour">
+                                <i class="fas fa-filter me-3" style="color: var(--accent-color);"></i>
+                                Can I search by case number or party name?
+                            </button>
+                        </h2>
+                        <div id="collapseFour" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                Yes! LegalSearch Pro offers multiple ways to search for cases:
+                                <ul style="margin-top: 1rem;">
+                                    <li><strong>Case number search:</strong> Enter specific case numbers for direct access</li>
+                                    <li><strong>Party name filtering:</strong> Search by plaintiff or defendant names</li>
+                                    <li><strong>Judge name search:</strong> Find cases by presiding judge</li>
+                                    <li><strong>Date range filtering:</strong> Filter cases by decision dates</li>
+                                    <li><strong>Court jurisdiction filtering:</strong> Search within specific courts or levels</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item" style="--item-index: 5">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFive">
+                                <i class="fas fa-chart-line me-3" style="color: var(--accent-color);"></i>
+                                What analytics are available?
+                            </button>
+                        </h2>
+                        <div id="collapseFive" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                LegalSearch Pro provides comprehensive analytics to improve your research:
+                                <ul style="margin-top: 1rem;">
+                                    <li><strong>Search history and patterns:</strong> Track your research queries over time</li>
+                                    <li><strong>Most viewed case types:</strong> See which legal areas you research most</li>
+                                    <li><strong>Research time tracking:</strong> Monitor time spent on different cases</li>
+                                    <li><strong>Search effectiveness:</strong> Analyze which searches yield the best results</li>
+                                    <li><strong>Case relevance trends:</strong> Identify patterns in case similarities</li>
+                                    <li><strong>Custom research reports:</strong> Generate summaries of your research activity</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contact Support -->
+            <div class="contact-card">
+                <div class="contact-icon">
+                    <i class="fas fa-headset"></i>
+                </div>
+                <h3 style="color: var(--text-primary); margin-bottom: 1rem;">Need More Help?</h3>
+                <p style="color: var(--text-secondary); margin-bottom: 2rem;">
+                    Can't find what you're looking for? Our support team is here to help you get the most out of LegalSearch Pro.
+                </p>
+                <button class="btn-contact" data-bs-toggle="modal" data-bs-target="#contactSupportModal">
+                    <i class="fas fa-envelope me-2"></i>
+                    Contact Support
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <!-- Contact Support Modal -->
+    <div class="modal fade" id="contactSupportModal" tabindex="-1" aria-labelledby="contactSupportLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content" style="background: var(--card-bg); color: var(--text-primary); border: 1px solid var(--border-color); border-radius: 15px;">
+                <div class="modal-header" style="border-bottom: 1px solid var(--border-color);">
+                    <h5 class="modal-title" id="contactSupportLabel">
+                        <i class="fas fa-headset me-2" style="color: var(--accent-color);"></i>Contact Support
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Contact Information -->
+                    <div class="row mb-4">
+                        <div class="col-md-6 mb-3">
+                            <div style="background: rgba(99, 102, 241, 0.1); border-radius: 12px; padding: 1.5rem; height: 100%;">
+                                <i class="fas fa-envelope" style="color: var(--accent-color); font-size: 1.5rem; margin-bottom: 0.75rem;"></i>
+                                <h6 style="color: var(--text-primary); margin-bottom: 0.5rem;">Email Support</h6>
+                                <a href="mailto:support@legalsearchpro.com" style="color: var(--accent-color); text-decoration: none;">
+                                    support@legalsearchpro.com
+                                </a>
+                                <p style="color: var(--text-secondary); font-size: 0.875rem; margin-top: 0.5rem; margin-bottom: 0;">
+                                    Response time: 24-48 hours
+                                </p>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div style="background: rgba(99, 102, 241, 0.1); border-radius: 12px; padding: 1.5rem; height: 100%;">
+                                <i class="fas fa-phone" style="color: var(--accent-color); font-size: 1.5rem; margin-bottom: 0.75rem;"></i>
+                                <h6 style="color: var(--text-primary); margin-bottom: 0.5rem;">Phone Support</h6>
+                                <a href="tel:+918001234567" style="color: var(--accent-color); text-decoration: none;">
+                                    +91 800-123-4567
+                                </a>
+                                <p style="color: var(--text-secondary); font-size: 0.875rem; margin-top: 0.5rem; margin-bottom: 0;">
+                                    Mon-Fri: 9 AM - 6 PM IST
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr style="border-color: var(--border-color); margin: 1.5rem 0;">
+
+                    <!-- Support Form -->
+                    <h6 style="color: var(--text-primary); margin-bottom: 1rem;">
+                        <i class="fas fa-paper-plane me-2" style="color: var(--accent-color);"></i>Send us a message
+                    </h6>
+                    <form id="supportForm">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="supportName" class="form-label">Your Name</label>
+                                <input type="text" class="form-control" id="supportName" 
+                                       style="background: rgba(255, 255, 255, 0.05); border: 2px solid var(--border-color); border-radius: 12px; color: var(--text-primary);" 
+                                       required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="supportEmail" class="form-label">Email Address</label>
+                                <input type="email" class="form-control" id="supportEmail" 
+                                       style="background: rgba(255, 255, 255, 0.05); border: 2px solid var(--border-color); border-radius: 12px; color: var(--text-primary);" 
+                                       required>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="supportSubject" class="form-label">Subject</label>
+                            <select class="form-select" id="supportSubject" 
+                                    style="background: rgba(255, 255, 255, 0.05); border: 2px solid var(--border-color); border-radius: 12px; color: var(--text-primary);" 
+                                    required>
+                                <option value="">Select a topic...</option>
+                                <option value="technical">Technical Issue</option>
+                                <option value="search">Search Problems</option>
+                                <option value="account">Account & Billing</option>
+                                <option value="feature">Feature Request</option>
+                                <option value="feedback">General Feedback</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="supportMessage" class="form-label">Message</label>
+                            <textarea class="form-control" id="supportMessage" rows="5" 
+                                      style="background: rgba(255, 255, 255, 0.05); border: 2px solid var(--border-color); border-radius: 12px; color: var(--text-primary);" 
+                                      placeholder="Please describe your issue or question in detail..."
+                                      required></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="supportCopy" checked>
+                                <label class="form-check-label" for="supportCopy" style="color: var(--text-secondary);">
+                                    Send me a copy of this message
+                                </label>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn w-100" 
+                                style="background: var(--primary-gradient); border: none; border-radius: 12px; padding: 0.875rem; color: white; font-weight: 600;">
+                            <i class="fas fa-paper-plane me-2"></i>Send Message
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Pre-fill user info if logged in
+        window.addEventListener('DOMContentLoaded', function() {
+            const userEmail = localStorage.getItem('userEmail');
+            const userName = localStorage.getItem('userName');
+            
+            if (userEmail) {
+                document.getElementById('supportEmail').value = userEmail;
+            }
+            if (userName) {
+                document.getElementById('supportName').value = userName;
+            }
+        });
+
+        // Handle support form submission
+        document.getElementById('supportForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById('supportName').value;
+            const email = document.getElementById('supportEmail').value;
+            const subject = document.getElementById('supportSubject').value;
+            const message = document.getElementById('supportMessage').value;
+            const sendCopy = document.getElementById('supportCopy').checked;
+            
+            // Get button
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            
+            // Show loading state
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Sending...';
+            submitBtn.disabled = true;
+            
+            // Simulate sending (in real app, this would be an API call)
+            setTimeout(() => {
+                // Log to console (in real app, this would be sent to backend)
+                console.log('Support Ticket Submitted:', {
+                    name, email, subject, message, sendCopy,
+                    timestamp: new Date().toISOString()
+                });
+                
+                // Reset form
+                this.reset();
+                
+                // Pre-fill user info again
+                if (localStorage.getItem('userEmail')) {
+                    document.getElementById('supportEmail').value = localStorage.getItem('userEmail');
+                }
+                if (localStorage.getItem('userName')) {
+                    document.getElementById('supportName').value = localStorage.getItem('userName');
+                }
+                
+                // Show success notification
+                showNotification('✅ Support ticket submitted successfully! We\'ll get back to you within 24-48 hours.', 'success');
+                
+                // Close modal
+                const modal = bootstrap.Modal.getInstance(document.getElementById('contactSupportModal'));
+                modal.hide();
+                
+                // Reset button
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }, 1500);
+        });
+
+        // Show notification function
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: var(--card-bg);
+                border: 1px solid var(--border-color);
+                border-radius: 10px;
+                padding: 1rem 1.5rem;
+                color: var(--text-primary);
+                z-index: 9999;
+                animation: slideInNotification 0.3s ease-out;
+                max-width: 350px;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            `;
+            
+            notification.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                    <i class="fas fa-info-circle" style="color: var(--accent-color); font-size: 1.2rem;"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.animation = 'slideOutNotification 0.3s ease-out forwards';
+                setTimeout(() => notification.remove(), 300);
+            }, 4000);
+        }
+
+        // Add CSS for notification animations
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideInNotification {
+                from { opacity: 0; transform: translateX(100%); }
+                to { opacity: 1; transform: translateX(0); }
+            }
+            
+            @keyframes slideOutNotification {
+                from { opacity: 1; transform: translateX(0); }
+                to { opacity: 0; transform: translateX(100%); }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Update authentication links
+        function updateAuthLinks() {
+            const authLinks = document.getElementById('auth-links');
+            if (localStorage.getItem('isLoggedIn') === 'true') {
+                authLinks.innerHTML = `
+                    <a class="nav-link" href="profile.html">
+                        <i class="fas fa-user me-1"></i>Profile
+                    </a>
+                    <a class="nav-link" href="#" id="logout-link">
+                        <i class="fas fa-sign-out-alt me-1"></i>Logout
+                    </a>
+                `;
+                document.getElementById('logout-link').onclick = function(e) {
+                    e.preventDefault();
+                    localStorage.removeItem('isLoggedIn');
+                    localStorage.removeItem('userEmail');
+                    localStorage.removeItem('userName');
+                    updateAuthLinks();
+                    window.location.href = "login.html";
+                };
+            } else {
+                authLinks.innerHTML = `
+                    <a class="nav-link" href="login.html">
+                        <i class="fas fa-sign-in-alt me-1"></i>Login
+                    </a>
+                    <a class="nav-link" href="signup.html">
+                        <i class="fas fa-user-plus me-1"></i>Sign Up
+                    </a>
+                `;
+            }
+        }
+        updateAuthLinks();
+    </script>
+</body>
+</html>

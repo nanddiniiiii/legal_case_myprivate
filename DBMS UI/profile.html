@@ -1,0 +1,956 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile - Legal Vector Search</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --accent-color: #6366f1;
+            --accent-hover: #4f46e5;
+            --dark-bg: #0f0f23;
+            --card-bg: #1a1b3a;
+            --text-primary: #e2e8f0;
+            --text-secondary: #94a3b8;
+            --border-color: #334155;
+            --glow-color: rgba(99, 102, 241, 0.5);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background: var(--dark-bg);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        /* Navbar Styles */
+        .navbar {
+            background: rgba(26, 27, 58, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .navbar-brand {
+            font-family: 'Inter', sans-serif;
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: var(--accent-color) !important;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .navbar-brand:hover {
+            transform: translateY(-2px);
+            color: var(--accent-hover) !important;
+        }
+
+        .navbar-brand i {
+            font-size: 1.8rem;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-link {
+            color: var(--text-secondary) !important;
+            font-weight: 500;
+            position: relative;
+            transition: all 0.3s ease;
+            padding: 0.5rem 1rem !important;
+            border-radius: 10px;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            color: var(--accent-color) !important;
+            background: rgba(99, 102, 241, 0.1);
+        }
+
+        /* Page Header */
+        .page-header-section {
+            padding: 3rem 0 2rem;
+            background: radial-gradient(ellipse at center, rgba(99, 102, 241, 0.1) 0%, transparent 70%);
+            position: relative;
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+            animation: slideUp 1s ease-out;
+        }
+
+        .page-subtitle {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            animation: slideUp 1s ease-out 0.2s both;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Profile Content */
+        .profile-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem 0;
+        }
+
+        .profile-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 3rem;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+            animation: slideUp 1s ease-out 0.4s both;
+            margin-bottom: 2rem;
+        }
+
+        .profile-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--primary-gradient);
+        }
+
+        .db-status {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 15px;
+            padding: 2rem;
+            text-align: center;
+            margin-top: 2rem;
+        }
+
+        .db-status-icon {
+            font-size: 4rem;
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+            opacity: 0.5;
+        }
+
+        .btn-primary-custom {
+            background: var(--primary-gradient);
+            border: none;
+            border-radius: 12px;
+            padding: 0.875rem 2rem;
+            font-weight: 600;
+            font-size: 1rem;
+            color: white;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary-custom:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.4);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">
+                <i class="fas fa-balance-scale"></i>
+                LegalSearch Pro
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="index.html">Search Cases</a></li>
+                    <li class="nav-item"><a class="nav-link" href="browse.html">Browse</a></li>
+                    <li class="nav-item"><a class="nav-link" href="recent-searches.html">Recent Searches</a></li>
+                    <li class="nav-item"><a class="nav-link" href="help.html">Help</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="profile.html">My Account</a></li>
+                    <li id="auth-links"></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <section class="page-header-section">
+        <div class="container">
+            <h1 class="page-title">User Profile</h1>
+            <p class="page-subtitle">Manage your account settings and view your research activity</p>
+        </div>
+    </section>
+
+    <main class="container">
+        <div class="profile-container">
+            <!-- Profile Card -->
+            <div class="profile-card">
+                <div style="text-align: center; margin-bottom: 3rem;">
+                    <div style="width: 120px; height: 120px; border-radius: 50%; background: var(--primary-gradient); 
+                                display: flex; align-items: center; justify-content: center; font-size: 3rem; 
+                                color: white; font-weight: 700; margin: 0 auto 1.5rem;">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <h2 id="userName" style="color: var(--text-primary); margin-bottom: 0.5rem;">Loading...</h2>
+                    <p style="color: var(--accent-color); font-size: 1.1rem; font-weight: 500;">Professional User</p>
+                    <p id="memberSince" style="color: var(--text-secondary);">Member since: <span style="color: var(--success-color);">Loading...</span></p>
+                </div>
+
+                <div class="row text-center">
+                    <div class="col-md-4">
+                        <div style="padding: 1.5rem;">
+                            <div id="profileTotalSearches" style="font-size: 2rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.5rem;">0</div>
+                            <div style="color: var(--text-secondary); font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.5px;">Total Searches</div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div style="padding: 1.5rem;">
+                            <div id="profileCasesSaved" style="font-size: 2rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.5rem;">0</div>
+                            <div style="color: var(--text-secondary); font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.5px;">Cases Saved</div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div style="padding: 1.5rem;">
+                            <div id="profileDaysActive" style="font-size: 2rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.5rem;">0</div>
+                            <div style="color: var(--text-secondary); font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.5px;">Days Active</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Research Statistics -->
+            <div class="db-status">
+                <div class="db-status-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <h4 style="color: var(--text-primary); margin-bottom: 1rem;">Your Research Statistics</h4>
+                <p style="color: var(--text-secondary); margin-bottom: 2rem; max-width: 600px; margin-left: auto; margin-right: auto;">
+                    Track your legal research activity and analyze your search patterns to improve efficiency.
+                </p>
+                
+                <div class="row justify-content-center">
+                    <div class="col-md-3 text-center mb-3">
+                        <div id="statTotalSearches" style="font-size: 2rem; font-weight: 700; color: var(--accent-color);">0</div>
+                        <div style="color: var(--text-secondary); font-size: 0.9rem;">Total Searches</div>
+                    </div>
+                    <div class="col-md-3 text-center mb-3">
+                        <div id="statBookmarks" style="font-size: 2rem; font-weight: 700; color: var(--success-color);">0</div>
+                        <div style="color: var(--text-secondary); font-size: 0.9rem;">Cases Bookmarked</div>
+                    </div>
+                    <div class="col-md-3 text-center mb-3">
+                        <div id="statResearchTime" style="font-size: 2rem; font-weight: 700; color: var(--warning-color);">0h</div>
+                        <div style="color: var(--text-secondary); font-size: 0.9rem;">Research Time</div>
+                    </div>
+                    <div class="col-md-3 text-center mb-3">
+                        <div id="statSuccessRate" style="font-size: 2rem; font-weight: 700; color: var(--info-color);">0%</div>
+                        <div style="color: var(--text-secondary); font-size: 0.9rem;">Search Success Rate</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Settings -->
+            <div class="profile-card">
+                <h3 style="color: var(--text-primary); margin-bottom: 2rem; display: flex; align-items: center; gap: 0.75rem;">
+                    <i class="fas fa-cog" style="color: var(--accent-color);"></i>
+                    Quick Settings
+                </h3>
+                
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <button class="btn btn-outline-light w-100" style="border-radius: 12px; padding: 1rem; text-align: left; height: 80px;">
+                            <div style="display: flex; align-items: center; gap: 1rem;">
+                                <i class="fas fa-user-edit" style="font-size: 1.5rem; color: var(--accent-color);"></i>
+                                <div>
+                                    <div style="font-weight: 600;">Edit Profile</div>
+                                    <div style="font-size: 0.9rem; color: var(--text-secondary);">Update personal information</div>
+                                </div>
+                            </div>
+                        </button>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <button class="btn btn-outline-light w-100" style="border-radius: 12px; padding: 1rem; text-align: left; height: 80px;">
+                            <div style="display: flex; align-items: center; gap: 1rem;">
+                                <i class="fas fa-key" style="font-size: 1.5rem; color: var(--accent-color);"></i>
+                                <div>
+                                    <div style="font-weight: 600;">Change Password</div>
+                                    <div style="font-size: 0.9rem; color: var(--text-secondary);">Update security credentials</div>
+                                </div>
+                            </div>
+                        </button>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <button class="btn btn-outline-light w-100" style="border-radius: 12px; padding: 1rem; text-align: left; height: 80px;">
+                            <div style="display: flex; align-items: center; gap: 1rem;">
+                                <i class="fas fa-bell" style="font-size: 1.5rem; color: var(--accent-color);"></i>
+                                <div>
+                                    <div style="font-weight: 600;">Notifications</div>
+                                    <div style="font-size: 0.9rem; color: var(--text-secondary);">Manage alert preferences</div>
+                                </div>
+                            </div>
+                        </button>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <button class="btn btn-outline-light w-100" style="border-radius: 12px; padding: 1rem; text-align: left; height: 80px;">
+                            <div style="display: flex; align-items: center; gap: 1rem;">
+                                <i class="fas fa-shield-alt" style="font-size: 1.5rem; color: var(--accent-color);"></i>
+                                <div>
+                                    <div style="font-weight: 600;">Privacy</div>
+                                    <div style="font-size: 0.9rem; color: var(--text-secondary);">Control data visibility</div>
+                                </div>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Handle button clicks
+        document.querySelectorAll('button').forEach(button => {
+            button.addEventListener('click', function() {
+                // Show loading state
+                const originalText = this.innerHTML;
+                this.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Loading...';
+                this.disabled = true;
+                
+                setTimeout(() => {
+                    this.innerHTML = originalText;
+                    this.disabled = false;
+                    
+                    // Show notification
+                    showNotification('Profile settings updated successfully!', 'success');
+                }, 1500);
+            });
+        });
+
+        // Show notification function
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: var(--card-bg);
+                border: 1px solid var(--border-color);
+                border-radius: 10px;
+                padding: 1rem 1.5rem;
+                color: var(--text-primary);
+                z-index: 9999;
+                animation: slideIn 0.3s ease-out;
+                max-width: 350px;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            `;
+            
+            const icon = 'fa-info-circle';
+            const color = 'var(--accent-color)';
+            
+            notification.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                    <i class="fas ${icon}" style="color: ${color}; font-size: 1.2rem;"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.animation = 'slideOut 0.3s ease-out forwards';
+                setTimeout(() => notification.remove(), 300);
+            }, 4000);
+        }
+
+        // Add CSS for animations
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideIn {
+                from {
+                    opacity: 0;
+                    transform: translateX(100%);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateX(0);
+                }
+            }
+            
+            @keyframes slideOut {
+                from {
+                    opacity: 1;
+                    transform: translateX(0);
+                }
+                to {
+                    opacity: 0;
+                    transform: translateX(100%);
+                }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Notification system
+        const notificationStyle = document.createElement('style');
+        notificationStyle.textContent = `
+            .notification {
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 15px 20px;
+                border-radius: 12px;
+                color: white;
+                font-weight: 500;
+                z-index: 9999;
+                opacity: 0;
+                transform: translateX(400px);
+                transition: all 0.3s ease;
+            }
+            .notification.success {
+                background: linear-gradient(135deg, #28a745, #20c997);
+            }
+            .notification.info {
+                background: linear-gradient(135deg, #17a2b8, #007bff);
+            }
+            .notification.show {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        `;
+        document.head.appendChild(notificationStyle);
+
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.innerHTML = `<i class="fas fa-${type === 'success' ? 'check-circle' : 'info-circle'} me-2"></i>${message}`;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => notification.classList.add('show'), 100);
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+
+        function updateAuthLinks() {
+            const authLinks = document.getElementById('auth-links');
+            if (localStorage.getItem('isLoggedIn') === 'true') {
+                // Show Logout only
+                authLinks.innerHTML = `
+                    <a class="nav-link" href="#" id="logout-link">
+                        <i class="fas fa-sign-out-alt me-1"></i>Logout
+                    </a>
+                `;
+                document.getElementById('logout-link').onclick = function(e) {
+                    e.preventDefault();
+                    localStorage.removeItem('isLoggedIn');
+                    localStorage.removeItem('userEmail');
+                    localStorage.removeItem('userName');
+                    updateAuthLinks();
+                    window.location.href = "login.html";
+                };
+            } else {
+                // Show Login and Sign Up
+                authLinks.innerHTML = `
+                    <a class="nav-link" href="login.html">
+                        <i class="fas fa-sign-in-alt me-1"></i>Login
+                    </a>
+                    <a class="nav-link" href="signup.html">
+                        <i class="fas fa-user-plus me-1"></i>Sign Up
+                    </a>
+                `;
+            }
+        }
+        updateAuthLinks();
+    </script>
+
+    <!-- Edit Profile Modal -->
+    <div class="modal fade" id="editProfileModal" tabindex="-1" aria-labelledby="editProfileLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content" style="background: var(--card-bg); color: var(--text-primary); border: 1px solid var(--border-color); border-radius: 15px;">
+                <div class="modal-header" style="border-bottom: 1px solid var(--border-color);">
+                    <h5 class="modal-title" id="editProfileLabel">
+                        <i class="fas fa-user-edit me-2" style="color: var(--accent-color);"></i>Edit Profile
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editProfileForm">
+                        <div class="mb-3">
+                            <label for="editName" class="form-label">Full Name</label>
+                            <input type="text" class="form-control" id="editName" 
+                                   style="background: rgba(255, 255, 255, 0.05); border: 2px solid var(--border-color); border-radius: 12px; color: var(--text-primary);" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editEmail" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="editEmail" 
+                                   style="background: rgba(255, 255, 255, 0.05); border: 2px solid var(--border-color); border-radius: 12px; color: var(--text-primary);" disabled>
+                            <small class="text-muted">Email cannot be changed</small>
+                        </div>
+                        <button type="submit" class="btn w-100 mt-3" 
+                                style="background: var(--primary-gradient); border: none; border-radius: 12px; padding: 0.875rem; color: white; font-weight: 600;">
+                            <i class="fas fa-save me-2"></i>Save Changes
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Settings Modal -->
+    <div class="modal fade" id="notificationModal" tabindex="-1" aria-labelledby="notificationLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content" style="background: var(--card-bg); color: var(--text-primary); border: 1px solid var(--border-color); border-radius: 15px;">
+                <div class="modal-header" style="border-bottom: 1px solid var(--border-color);">
+                    <h5 class="modal-title" id="notificationLabel">
+                        <i class="fas fa-bell me-2" style="color: var(--accent-color);"></i>Notification Preferences
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <label class="form-label mb-0">Search Results Notifications</label>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="notifySearchResults" checked>
+                            </div>
+                        </div>
+                        <small class="text-muted">Get notified when your searches return new results</small>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <label class="form-label mb-0">New Case Updates</label>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="notifyNewCases" checked>
+                            </div>
+                        </div>
+                        <small class="text-muted">Alerts when new cases are added to the database</small>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <label class="form-label mb-0">Bookmarked Cases Updates</label>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="notifyBookmarks" checked>
+                            </div>
+                        </div>
+                        <small class="text-muted">Updates on cases you've bookmarked</small>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <label class="form-label mb-0">Email Notifications</label>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="notifyEmail">
+                            </div>
+                        </div>
+                        <small class="text-muted">Receive notifications via email</small>
+                    </div>
+                    
+                    <button type="button" class="btn w-100 mt-3" id="saveNotificationSettings"
+                            style="background: var(--primary-gradient); border: none; border-radius: 12px; padding: 0.875rem; color: white; font-weight: 600;">
+                        <i class="fas fa-save me-2"></i>Save Preferences
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Privacy Settings Modal -->
+    <div class="modal fade" id="privacyModal" tabindex="-1" aria-labelledby="privacyLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content" style="background: var(--card-bg); color: var(--text-primary); border: 1px solid var(--border-color); border-radius: 15px;">
+                <div class="modal-header" style="border-bottom: 1px solid var(--border-color);">
+                    <h5 class="modal-title" id="privacyLabel">
+                        <i class="fas fa-shield-alt me-2" style="color: var(--accent-color);"></i>Privacy Settings
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <label class="form-label mb-0">Profile Visibility</label>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="privacyProfileVisible" checked>
+                            </div>
+                        </div>
+                        <small class="text-muted">Make your profile visible to other users</small>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <label class="form-label mb-0">Search History Tracking</label>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="privacyTrackSearches" checked>
+                            </div>
+                        </div>
+                        <small class="text-muted">Save and track your search history</small>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <label class="form-label mb-0">Share Anonymous Analytics</label>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="privacyAnalytics" checked>
+                            </div>
+                        </div>
+                        <small class="text-muted">Help improve the platform with anonymous usage data</small>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <label class="form-label mb-0">Show Research Statistics</label>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="privacyShowStats" checked>
+                            </div>
+                        </div>
+                        <small class="text-muted">Display your research stats on your profile</small>
+                    </div>
+                    
+                    <button type="button" class="btn w-100 mt-3" id="savePrivacySettings"
+                            style="background: var(--primary-gradient); border: none; border-radius: 12px; padding: 0.875rem; color: white; font-weight: 600;">
+                        <i class="fas fa-save me-2"></i>Save Settings
+                    </button>
+                    
+                    <hr style="border-color: var(--border-color); margin: 1.5rem 0;">
+                    
+                    <div class="text-center">
+                        <button type="button" class="btn btn-outline-danger" id="clearSearchHistory"
+                                style="border-radius: 12px; padding: 0.75rem 1.5rem;">
+                            <i class="fas fa-trash me-2"></i>Clear All Search History
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Change Password Modal -->
+    <div class="modal fade" id="changePasswordModal" tabindex="-1" aria-labelledby="changePasswordLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content" style="background: var(--card-bg); color: var(--text-primary); border: 1px solid var(--border-color); border-radius: 15px;">
+                <div class="modal-header" style="border-bottom: 1px solid var(--border-color);">
+                    <h5 class="modal-title" id="changePasswordLabel">
+                        <i class="fas fa-key me-2" style="color: var(--accent-color);"></i>Change Password
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="changePasswordForm">
+                        <div class="mb-3">
+                            <label for="oldPassword" class="form-label">Current Password</label>
+                            <input type="password" class="form-control" id="oldPassword" 
+                                   style="background: rgba(255, 255, 255, 0.05); border: 2px solid var(--border-color); border-radius: 12px; color: var(--text-primary);" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="newPassword" class="form-label">New Password</label>
+                            <input type="password" class="form-control" id="newPassword" 
+                                   style="background: rgba(255, 255, 255, 0.05); border: 2px solid var(--border-color); border-radius: 12px; color: var(--text-primary);" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="confirmNewPassword" class="form-label">Confirm New Password</label>
+                            <input type="password" class="form-control" id="confirmNewPassword" 
+                                   style="background: rgba(255, 255, 255, 0.05); border: 2px solid var(--border-color); border-radius: 12px; color: var(--text-primary);" required>
+                        </div>
+                        <button type="submit" class="btn w-100 mt-3" 
+                                style="background: var(--primary-gradient); border: none; border-radius: 12px; padding: 0.875rem; color: white; font-weight: 600;">
+                            <i class="fas fa-save me-2"></i>Update Password
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize default password if none exists
+        if (!localStorage.getItem('userPassword')) {
+            localStorage.setItem('userPassword', 'admin123');
+        }
+
+        // Change Password button click handler
+        document.querySelector('button:has(.fa-key)').addEventListener('click', () => {
+            const modal = new bootstrap.Modal(document.getElementById('changePasswordModal'));
+            modal.show();
+        });
+
+        // Load real user statistics
+        async function loadUserStats() {
+            try {
+                const userEmail = localStorage.getItem('userEmail');
+                
+                if (!userEmail) {
+                    console.error('No user email found');
+                    return;
+                }
+                
+                const response = await fetch(`http://localhost:5000/user-stats?email=${encodeURIComponent(userEmail)}`);
+                
+                if (!response.ok) {
+                    throw new Error('Failed to fetch user stats');
+                }
+                
+                const stats = await response.json();
+                
+                // Update user name and member since
+                document.getElementById('userName').textContent = stats.name || 'Legal Researcher';
+                document.getElementById('memberSince').innerHTML = `Member since: <span style="color: var(--success-color);">${stats.member_since}</span>`;
+                
+                // Update the three stats in the profile card
+                document.getElementById('profileTotalSearches').textContent = stats.total_searches;
+                document.getElementById('profileCasesSaved').textContent = stats.bookmarks;
+                document.getElementById('profileDaysActive').textContent = stats.days_active;
+                
+                // Update the research statistics section
+                document.getElementById('statTotalSearches').textContent = stats.total_searches;
+                document.getElementById('statBookmarks').textContent = stats.bookmarks;
+                document.getElementById('statResearchTime').textContent = stats.research_time;
+                document.getElementById('statSuccessRate').textContent = stats.success_rate;
+                
+            } catch (error) {
+                console.error('Error loading user stats:', error);
+            }
+        }
+        
+        // Load user stats when page loads
+        loadUserStats();
+
+
+        // Handle password change
+        document.getElementById('changePasswordForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const oldPass = document.getElementById('oldPassword').value.trim();
+            const newPass = document.getElementById('newPassword').value.trim();
+            const confirmPass = document.getElementById('confirmNewPassword').value.trim();
+            const storedPass = localStorage.getItem('userPassword');
+
+            // Validate old password
+            if (oldPass !== storedPass) {
+                alert('❌ Current password is incorrect!');
+                return;
+            }
+
+            // Validate new password
+            if (newPass.length < 6) {
+                alert('⚠️ New password must be at least 6 characters long.');
+                return;
+            }
+
+            if (newPass !== confirmPass) {
+                alert('⚠️ New passwords do not match!');
+                return;
+            }
+
+            // Save new password
+            localStorage.setItem('userPassword', newPass);
+            showNotification('✅ Password updated successfully!', 'success');
+
+            // Reset form and close modal
+            this.reset();
+            const modal = bootstrap.Modal.getInstance(document.getElementById('changePasswordModal'));
+            modal.hide();
+        });
+
+        // Edit Profile button handler
+        document.querySelector('button:has(.fa-user-edit)').addEventListener('click', () => {
+            const userEmail = localStorage.getItem('userEmail');
+            const userName = localStorage.getItem('userName');
+            
+            // Populate the modal with current user data
+            document.getElementById('editName').value = userName || '';
+            document.getElementById('editEmail').value = userEmail || '';
+            
+            const modal = new bootstrap.Modal(document.getElementById('editProfileModal'));
+            modal.show();
+        });
+
+        // Handle profile update
+        document.getElementById('editProfileForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const newName = document.getElementById('editName').value.trim();
+            const userEmail = localStorage.getItem('userEmail');
+
+            if (!newName) {
+                alert('⚠️ Please enter your name.');
+                return;
+            }
+
+            try {
+                const response = await fetch('http://localhost:5000/update-profile', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        email: userEmail,
+                        name: newName
+                    })
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    // Update localStorage
+                    localStorage.setItem('userName', newName);
+                    
+                    // Update the display
+                    document.querySelector('h2').textContent = newName;
+                    
+                    showNotification('✅ Profile updated successfully!', 'success');
+                    
+                    // Close modal
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('editProfileModal'));
+                    modal.hide();
+                    
+                    // Reload stats
+                    loadUserStats();
+                } else {
+                    alert('❌ ' + (result.error || 'Failed to update profile'));
+                }
+            } catch (error) {
+                console.error('Error updating profile:', error);
+                alert('❌ Failed to update profile. Please try again.');
+            }
+        });
+
+        // Notification button handler
+        document.querySelector('button:has(.fa-bell)').addEventListener('click', () => {
+            // Load current settings
+            document.getElementById('notifySearchResults').checked = 
+                localStorage.getItem('notifySearchResults') !== 'false';
+            document.getElementById('notifyNewCases').checked = 
+                localStorage.getItem('notifyNewCases') !== 'false';
+            document.getElementById('notifyBookmarks').checked = 
+                localStorage.getItem('notifyBookmarks') !== 'false';
+            document.getElementById('notifyEmail').checked = 
+                localStorage.getItem('notifyEmail') === 'true';
+            
+            const modal = new bootstrap.Modal(document.getElementById('notificationModal'));
+            modal.show();
+        });
+
+        // Save notification settings
+        document.getElementById('saveNotificationSettings').addEventListener('click', () => {
+            localStorage.setItem('notifySearchResults', 
+                document.getElementById('notifySearchResults').checked);
+            localStorage.setItem('notifyNewCases', 
+                document.getElementById('notifyNewCases').checked);
+            localStorage.setItem('notifyBookmarks', 
+                document.getElementById('notifyBookmarks').checked);
+            localStorage.setItem('notifyEmail', 
+                document.getElementById('notifyEmail').checked);
+            
+            showNotification('✅ Notification preferences saved!', 'success');
+            
+            const modal = bootstrap.Modal.getInstance(document.getElementById('notificationModal'));
+            modal.hide();
+        });
+
+        // Privacy button handler
+        document.querySelector('button:has(.fa-shield-alt)').addEventListener('click', () => {
+            // Load current settings
+            document.getElementById('privacyProfileVisible').checked = 
+                localStorage.getItem('privacyProfileVisible') !== 'false';
+            document.getElementById('privacyTrackSearches').checked = 
+                localStorage.getItem('privacyTrackSearches') !== 'false';
+            document.getElementById('privacyAnalytics').checked = 
+                localStorage.getItem('privacyAnalytics') !== 'false';
+            document.getElementById('privacyShowStats').checked = 
+                localStorage.getItem('privacyShowStats') !== 'false';
+            
+            const modal = new bootstrap.Modal(document.getElementById('privacyModal'));
+            modal.show();
+        });
+
+        // Save privacy settings
+        document.getElementById('savePrivacySettings').addEventListener('click', () => {
+            localStorage.setItem('privacyProfileVisible', 
+                document.getElementById('privacyProfileVisible').checked);
+            localStorage.setItem('privacyTrackSearches', 
+                document.getElementById('privacyTrackSearches').checked);
+            localStorage.setItem('privacyAnalytics', 
+                document.getElementById('privacyAnalytics').checked);
+            localStorage.setItem('privacyShowStats', 
+                document.getElementById('privacyShowStats').checked);
+            
+            showNotification('✅ Privacy settings saved!', 'success');
+            
+            const modal = bootstrap.Modal.getInstance(document.getElementById('privacyModal'));
+            modal.hide();
+        });
+
+        // Clear search history
+        document.getElementById('clearSearchHistory').addEventListener('click', async () => {
+            if (!confirm('⚠️ Are you sure you want to clear all your search history? This action cannot be undone.')) {
+                return;
+            }
+            
+            try {
+                const userEmail = localStorage.getItem('userEmail');
+                
+                const response = await fetch('http://localhost:5000/clear-search-history', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ email: userEmail })
+                });
+                
+                if (response.ok) {
+                    showNotification('✅ Search history cleared successfully!', 'success');
+                    
+                    // Close privacy modal
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('privacyModal'));
+                    modal.hide();
+                    
+                    // Reload stats to show 0 searches
+                    loadUserStats();
+                } else {
+                    alert('❌ Failed to clear search history');
+                }
+            } catch (error) {
+                console.error('Error clearing search history:', error);
+                alert('❌ Failed to clear search history. Please try again.');
+            }
+        });
+    </script>
+</body>
+</html>

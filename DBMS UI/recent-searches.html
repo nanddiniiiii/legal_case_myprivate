@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recent Searches - LegalSearch Pro</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --accent-color: #6366f1;
+            --dark-bg: #0f0f23;
+            --card-bg: #1a1b3a;
+            --text-primary: #e2e8f0;
+            --text-secondary: #94a3b8;
+            --border-color: #334155;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background: var(--dark-bg);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        .navbar {
+            background: rgba(26, 27, 58, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            color: var(--text-primary) !important;
+            text-decoration: none;
+        }
+
+        .navbar-brand i {
+            color: var(--accent-color);
+            margin-right: 0.5rem;
+        }
+
+        .nav-link {
+            color: var(--text-secondary) !important;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            color: var(--accent-color) !important;
+        }
+
+        .page-header-section {
+            padding: 4rem 0 2rem;
+            text-align: center;
+        }
+
+        .page-title {
+            font-size: 3rem;
+            font-weight: 700;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1rem;
+        }
+
+        .page-subtitle {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .search-history-section {
+            padding: 2rem 0;
+        }
+
+        .search-item {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .search-item:hover {
+            transform: translateY(-2px);
+            border-color: var(--accent-color);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .search-query {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .search-meta {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 1rem;
+        }
+
+        .search-date {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .search-results-count {
+            background: var(--primary-gradient);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            margin-left: auto;
+        }
+
+        .search-preview {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .search-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn-action {
+            background: rgba(99, 102, 241, 0.1);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            color: var(--accent-color);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .btn-action:hover {
+            background: rgba(99, 102, 241, 0.2);
+            color: var(--accent-color);
+            text-decoration: none;
+        }
+
+        .filter-section {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .filter-row {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .filter-input {
+            background: var(--dark-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 0.5rem 1rem;
+            color: var(--text-primary);
+            font-size: 0.9rem;
+        }
+
+        .filter-input:focus {
+            outline: none;
+            border-color: var(--accent-color);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--text-secondary);
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">
+                <i class="fas fa-balance-scale"></i>
+                LegalSearch Pro
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="index.html">Search Cases</a></li>
+                    <li class="nav-item"><a class="nav-link" href="browse.html">Browse</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="recent-searches.html">Recent Searches</a></li>
+                    <li class="nav-item"><a class="nav-link" href="help.html">Help</a></li>
+                    <li class="nav-item"><a class="nav-link" href="profile.html">My Account</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <section class="page-header-section">
+        <div class="container">
+            <h1 class="page-title">Recent Searches</h1>
+            <p class="page-subtitle">Review and repeat your previous legal research queries</p>
+        </div>
+    </section>
+
+    <main class="container">
+        <!-- Filter Section -->
+        <section class="filter-section">
+            <div class="filter-row">
+                <label style="color: var(--text-primary); font-weight: 500;">Filter by:</label>
+                <select class="filter-input">
+                    <option>All time</option>
+                    <option>Today</option>
+                    <option>This week</option>
+                    <option>This month</option>
+                </select>
+                <input type="text" class="filter-input" placeholder="Search in history..." style="flex: 1; min-width: 200px;">
+                <button class="btn-action">
+                    <i class="fas fa-search me-1"></i>Filter
+                </button>
+                <button class="btn-action" onclick="clearHistory()">
+                    <i class="fas fa-trash me-1"></i>Clear All
+                </button>
+            </div>
+        </section>
+
+        <!-- Search History -->
+        <section class="search-history-section">
+            <div id="searchHistory">
+                <div id="loadingSpinner" class="text-center" style="padding: 2rem;">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p class="mt-2" style="color: var(--text-secondary);">Loading your recent searches...</p>
+                </div>
+                <div id="searchList" style="display: none;">
+                    <!-- Searches will be loaded dynamically -->
+                </div>
+                <div id="emptyState" class="empty-state" style="display: none;">
+                    <i class="fas fa-history"></i>
+                    <h3>No Recent Searches</h3>
+                    <p>You haven't made any searches yet. Start searching to see your history here.</p>
+                    <a href="index.html" class="btn-action" style="margin-top: 1rem; display: inline-block;">
+                        <i class="fas fa-search me-2"></i>Start Searching
+                    </a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let currentUserEmail = 'anonymous';
+
+        // Load user data and recent searches on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get user email from localStorage
+            currentUserEmail = localStorage.getItem('userEmail') || 'anonymous';
+            
+            loadRecentSearches();
+        });
+
+        async function loadRecentSearches() {
+            try {
+                const response = await fetch(`http://localhost:5000/recent-searches?email=${encodeURIComponent(currentUserEmail)}&limit=20`);
+                const searches = await response.json();
+                
+                // Hide loading spinner
+                document.getElementById('loadingSpinner').style.display = 'none';
+                
+                if (searches.length === 0) {
+                    // Show empty state
+                    document.getElementById('emptyState').style.display = 'block';
+                } else {
+                    // Show search list
+                    const searchListContainer = document.getElementById('searchList');
+                    searchListContainer.innerHTML = '';
+                    
+                    searches.forEach(search => {
+                        const searchItem = createSearchItem(search);
+                        searchListContainer.appendChild(searchItem);
+                    });
+                    
+                    searchListContainer.style.display = 'block';
+                    
+                    // Add click handlers for action buttons
+                    addActionHandlers();
+                }
+            } catch (error) {
+                console.error('Error loading recent searches:', error);
+                document.getElementById('loadingSpinner').style.display = 'none';
+                document.getElementById('emptyState').style.display = 'block';
+                document.getElementById('emptyState').innerHTML = `
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <h3>Error Loading Searches</h3>
+                    <p>Unable to load your search history. Please try again later.</p>
+                    <a href="index.html" class="btn-action" style="margin-top: 1rem; display: inline-block;">
+                        <i class="fas fa-search me-2"></i>Start Searching
+                    </a>
+                `;
+            }
+        }
+
+        function createSearchItem(search) {
+            const div = document.createElement('div');
+            div.className = 'search-item';
+            div.onclick = () => repeatSearch(search.query);
+            
+            div.innerHTML = `
+                <div class="search-query">
+                    <i class="fas fa-search me-2" style="color: var(--accent-color);"></i>
+                    "${search.query}"
+                </div>
+                <div class="search-meta">
+                    <span class="search-date">
+                        <i class="fas fa-clock me-1"></i>
+                        ${search.time_ago}
+                    </span>
+                    <span class="search-results-count">${search.results_count} results</span>
+                </div>
+                <div class="search-preview">
+                    Found ${search.results_count} legal cases related to "${search.query}"
+                </div>
+                <div class="search-actions">
+                    <a href="#" class="btn-action" data-action="repeat">
+                        <i class="fas fa-redo me-1"></i>Repeat Search
+                    </a>
+                    <a href="#" class="btn-action" data-action="view">
+                        <i class="fas fa-eye me-1"></i>View Results
+                    </a>
+                    <a href="#" class="btn-action" data-action="save">
+                        <i class="fas fa-bookmark me-1"></i>Save
+                    </a>
+                </div>
+            `;
+            
+            return div;
+        }
+
+        function addActionHandlers() {
+            document.querySelectorAll('.btn-action').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const action = this.getAttribute('data-action');
+                    const searchItem = this.closest('.search-item');
+                    const query = searchItem.querySelector('.search-query').textContent.replace(/"/g, '').trim();
+                    
+                    if (action === 'repeat') {
+                        repeatSearch(query);
+                    } else if (action === 'view') {
+                        // Redirect to search results with the query
+                        window.location.href = `index.html?q=${encodeURIComponent(query)}`;
+                    } else if (action === 'save') {
+                        alert('Search saved to your bookmarks!');
+                    }
+                });
+            });
+        }
+
+        function repeatSearch(query) {
+            // Redirect to main search with the query
+            window.location.href = `index.html?q=${encodeURIComponent(query)}`;
+        }
+
+        function clearHistory() {
+            if (confirm('Are you sure you want to clear all search history? This action cannot be undone.')) {
+                // TODO: Implement API call to clear search history
+                document.getElementById('searchList').style.display = 'none';
+                document.getElementById('emptyState').style.display = 'block';
+                document.getElementById('emptyState').innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-history"></i>
+                        <h3>No Search History</h3>
+                        <p>Your search history has been cleared. Start searching to see your queries here.</p>
+                        <a href="index.html" class="btn-action" style="margin-top: 1rem; display: inline-block;">
+                            <i class="fas fa-search me-2"></i>Start Searching
+                        </a>
+                    </div>
+                `;
+            }
+        }
+    </script>
+</body>
+</html>
