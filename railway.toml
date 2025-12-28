@@ -1,15 +1,9 @@
 [build]
 builder = "NIXPACKS"
 
-[build.buildCommand]
-command = "pip install -r requirements.txt"
-
 [deploy]
-startCommand = "gunicorn api:app --bind 0.0.0.0:$PORT --workers 2 --timeout 120 --preload"
+startCommand = "gunicorn api:app --bind 0.0.0.0:$PORT --workers 2 --timeout 120"
 healthcheckPath = "/api/stats"
 healthcheckTimeout = 300
 restartPolicyType = "ON_FAILURE"
 restartPolicyMaxRetries = 10
-
-[build.watchPatterns]
-include = ["**/*.py", "requirements.txt", "Procfile"]
