@@ -192,12 +192,21 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item"><a class="nav-link" href="index.html">Search Cases</a></li>
-                    <li class="nav-item"><a class="nav-link active" href="browse.html">Browse</a></li>
-                    <li class="nav-item"><a class="nav-link" href="recent-searches.html">Recent Searches</a></li>
-                    <li class="nav-item"><a class="nav-link" href="help.html">Help</a></li>
-                    <li class="nav-item"><a class="nav-link" href="profile.html">My Account</a></li>
+                <ul class="navbar-nav ms-auto" id="navbar-auth-links">
+                    <li class="nav-item"><a class="nav-link" href="index.html"><i class="fas fa-search me-1"></i>Search</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="browse.html"><i class="fas fa-folder-open me-1"></i>Browse</a></li>
+                    <li class="nav-item"><a class="nav-link" href="bookmarks.html"><i class="fas fa-bookmark me-1"></i>Bookmarks</a></li>
+                    <li class="nav-item"><a class="nav-link" href="analytics-dashboard.html"><i class="fas fa-chart-bar me-1"></i>Analytics</a></li>
+                    <li class="nav-item"><a class="nav-link" href="recent-searches.html"><i class="fas fa-history me-1"></i>History</a></li>
+                    <li class="nav-item"><a class="nav-link" href="compare.html"><i class="fas fa-columns me-1"></i>Compare</a></li>
+                    <li class="nav-item"><a class="nav-link" href="help.html"><i class="fas fa-question-circle me-1"></i>Help</a></li>
+                    <li class="nav-item">
+                        <a id="themeToggle" class="nav-link" href="#" style="cursor: pointer;" title="Toggle Theme">
+                            <i class="fas fa-moon"></i>
+                        </a>
+                    </li>
+                    <li class="nav-item"><a class="nav-link" href="profile.html"><i class="fas fa-user me-1"></i>Account</a></li>
+                    <li id="auth-links"></li>
                 </ul>
             </div>
         </div>
@@ -229,102 +238,102 @@
         <!-- Browse Categories -->
         <section class="browse-section">
             <div class="row g-4">
-                <!-- Supreme Court Cases -->
+                <!-- Violent Crimes -->
                 <div class="col-lg-4 col-md-6">
-                    <a href="#" class="category-card" data-category-id="supreme_court">
+                    <a href="#" class="category-card" data-categories="assault,murder,rape,kidnapping,domestic_violence">
                         <div class="category-icon">
-                            <i class="fas fa-landmark"></i>
+                            <i class="fas fa-exclamation-triangle"></i>
                         </div>
-                        <h3 class="category-title">Supreme Court</h3>
-                        <p class="category-description">Constitutional cases, appeals, and landmark judgments from the highest court</p>
+                        <h3 class="category-title">Violent Crimes</h3>
+                        <p class="category-description">Assault, murder, rape, kidnapping, and domestic violence cases</p>
                     </a>
                 </div>
 
-                <!-- High Court Cases -->
+                <!-- Property Crimes -->
                 <div class="col-lg-4 col-md-6">
-                    <a href="#" class="category-card" data-category-id="high_courts">
+                    <a href="#" class="category-card" data-categories="robbery,theft,land_dispute,property_dispute">
                         <div class="category-icon">
-                            <i class="fas fa-gavel"></i>
+                            <i class="fas fa-home"></i>
                         </div>
-                        <h3 class="category-title">High Courts</h3>
-                        <p class="category-description">State high court judgments, writs, and appellate decisions</p>
+                        <h3 class="category-title">Property Crimes</h3>
+                        <p class="category-description">Robbery, theft, land disputes, and property-related cases</p>
                     </a>
                 </div>
 
-                <!-- Criminal Law -->
+                <!-- Financial Crimes -->
                 <div class="col-lg-4 col-md-6">
-                    <a href="#" class="category-card" data-category-id="criminal_law">
+                    <a href="#" class="category-card" data-categories="fraud,cheating,corruption,tax_evasion">
                         <div class="category-icon">
-                            <i class="fas fa-handcuffs"></i>
+                            <i class="fas fa-money-bill-wave"></i>
                         </div>
-                        <h3 class="category-title">Criminal Law</h3>
-                        <p class="category-description">Criminal cases, prosecutions, and criminal procedure matters</p>
-                    </a>
-                </div>
-
-                <!-- Civil Law -->
-                <div class="col-lg-4 col-md-6">
-                    <a href="#" class="category-card" data-category-id="civil_law">
-                        <div class="category-icon">
-                            <i class="fas fa-file-contract"></i>
-                        </div>
-                        <h3 class="category-title">Civil Law</h3>
-                        <p class="category-description">Civil disputes, contracts, property, and tort cases</p>
-                    </a>
-                </div>
-
-                <!-- Constitutional Law -->
-                <div class="col-lg-4 col-md-6">
-                    <a href="#" class="category-card" data-category-id="constitutional_law">
-                        <div class="category-icon">
-                            <i class="fas fa-scroll"></i>
-                        </div>
-                        <h3 class="category-title">Constitutional Law</h3>
-                        <p class="category-description">Fundamental rights, constitutional interpretation, and governance</p>
-                    </a>
-                </div>
-
-                <!-- Corporate Law -->
-                <div class="col-lg-4 col-md-6">
-                    <a href="#" class="category-card" data-category-id="corporate_law">
-                        <div class="category-icon">
-                            <i class="fas fa-building"></i>
-                        </div>
-                        <h3 class="category-title">Corporate Law</h3>
-                        <p class="category-description">Company matters, securities, mergers, and corporate governance</p>
+                        <h3 class="category-title">Financial Crimes</h3>
+                        <p class="category-description">Fraud, cheating, corruption, and tax evasion cases</p>
                     </a>
                 </div>
 
                 <!-- Family Law -->
                 <div class="col-lg-4 col-md-6">
-                    <a href="#" class="category-card" data-category-id="family_law">
+                    <a href="#" class="category-card" data-categories="divorce,dowry">
                         <div class="category-icon">
-                            <i class="fas fa-home"></i>
+                            <i class="fas fa-users"></i>
                         </div>
                         <h3 class="category-title">Family Law</h3>
-                        <p class="category-description">Marriage, divorce, custody, and family dispute cases</p>
+                        <p class="category-description">Divorce, dowry, and family-related legal matters</p>
                     </a>
                 </div>
 
-                <!-- Labor Law -->
+                <!-- Employment & Contracts -->
                 <div class="col-lg-4 col-md-6">
-                    <a href="#" class="category-card" data-category-id="labor_law">
+                    <a href="#" class="category-card" data-categories="contract_breach,employment">
                         <div class="category-icon">
-                            <i class="fas fa-hammer"></i>
+                            <i class="fas fa-file-contract"></i>
                         </div>
-                        <h3 class="category-title">Labor Law</h3>
-                        <p class="category-description">Employment, industrial disputes, and workers' rights cases</p>
+                        <h3 class="category-title">Employment & Contracts</h3>
+                        <p class="category-description">Employment disputes and contract breach cases</p>
                     </a>
                 </div>
 
-                <!-- Tax Law -->
+                <!-- Motor Accidents -->
                 <div class="col-lg-4 col-md-6">
-                    <a href="#" class="category-card" data-category-id="tax_law">
+                    <a href="#" class="category-card" data-categories="motor_accident">
                         <div class="category-icon">
-                            <i class="fas fa-calculator"></i>
+                            <i class="fas fa-car-crash"></i>
                         </div>
-                        <h3 class="category-title">Tax Law</h3>
-                        <p class="category-description">Income tax, GST, customs, and other taxation matters</p>
+                        <h3 class="category-title">Motor Accidents</h3>
+                        <p class="category-description">Motor vehicle accident compensation cases</p>
+                    </a>
+                </div>
+
+                <!-- All Criminal -->
+                <div class="col-lg-4 col-md-6">
+                    <a href="#" class="category-card" data-categories="assault,murder,rape,kidnapping,domestic_violence,robbery,theft,fraud,cheating,corruption,tax_evasion">
+                        <div class="category-icon">
+                            <i class="fas fa-handcuffs"></i>
+                        </div>
+                        <h3 class="category-title">All Criminal Cases</h3>
+                        <p class="category-description">Browse all criminal law cases</p>
+                    </a>
+                </div>
+
+                <!-- All Civil -->
+                <div class="col-lg-4 col-md-6">
+                    <a href="#" class="category-card" data-categories="divorce,dowry,contract_breach,employment,land_dispute,property_dispute,motor_accident">
+                        <div class="category-icon">
+                            <i class="fas fa-gavel"></i>
+                        </div>
+                        <h3 class="category-title">All Civil Cases</h3>
+                        <p class="category-description">Browse all civil law cases</p>
+                    </a>
+                </div>
+
+                <!-- All Cases -->
+                <div class="col-lg-4 col-md-6">
+                    <a href="#" class="category-card" data-categories="all">
+                        <div class="category-icon">
+                            <i class="fas fa-balance-scale"></i>
+                        </div>
+                        <h3 class="category-title">All Cases</h3>
+                        <p class="category-description">Browse the complete database of all legal cases</p>
                     </a>
                 </div>
             </div>
@@ -337,11 +346,11 @@
         document.querySelectorAll('.category-card').forEach(card => {
             card.addEventListener('click', function(e) {
                 e.preventDefault();
-                const categoryId = this.dataset.categoryId;
+                const categories = this.dataset.categories;
                 const categoryName = this.querySelector('.category-title').textContent;
                 
-                // Navigate to the results page, passing the category ID and name
-                window.location.href = `category-results.html?category=${encodeURIComponent(categoryId)}&name=${encodeURIComponent(categoryName)}`;
+                // Navigate to the results page, passing the categories and name
+                window.location.href = `category-results.html?categories=${encodeURIComponent(categories)}&name=${encodeURIComponent(categoryName)}`;
             });
         });
 
@@ -361,5 +370,6 @@
             }
         });
     </script>
+    <script src="theme-script.js"></script>
 </body>
 </html>

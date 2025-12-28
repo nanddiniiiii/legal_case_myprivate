@@ -312,12 +312,21 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item"><a class="nav-link" href="index.html">Search Cases</a></li>
-                    <li class="nav-item"><a class="nav-link" href="browse.html">Browse</a></li>
-                    <li class="nav-item"><a class="nav-link" href="recent-searches.html">Recent Searches</a></li>
-                    <li class="nav-item"><a class="nav-link active" href="help.html">Help</a></li>
-                    <li class="nav-item"><a class="nav-link" href="profile.html">My Account</a></li>
+                <ul class="navbar-nav ms-auto" id="navbar-auth-links">
+                    <li class="nav-item"><a class="nav-link" href="index.html"><i class="fas fa-search me-1"></i>Search</a></li>
+                    <li class="nav-item"><a class="nav-link" href="browse.html"><i class="fas fa-folder-open me-1"></i>Browse</a></li>
+                    <li class="nav-item"><a class="nav-link" href="bookmarks.html"><i class="fas fa-bookmark me-1"></i>Bookmarks</a></li>
+                    <li class="nav-item"><a class="nav-link" href="analytics-dashboard.html"><i class="fas fa-chart-bar me-1"></i>Analytics</a></li>
+                    <li class="nav-item"><a class="nav-link" href="recent-searches.html"><i class="fas fa-history me-1"></i>History</a></li>
+                    <li class="nav-item"><a class="nav-link" href="compare.html"><i class="fas fa-columns me-1"></i>Compare</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="help.html"><i class="fas fa-question-circle me-1"></i>Help</a></li>
+                    <li class="nav-item">
+                        <a id="themeToggle" class="nav-link" href="#" style="cursor: pointer;" title="Toggle Theme">
+                            <i class="fas fa-moon"></i>
+                        </a>
+                    </li>
+                    <li class="nav-item"><a class="nav-link" href="profile.html"><i class="fas fa-user me-1"></i>Account</a></li>
+                    <li id="auth-links"></li>
                 </ul>
             </div>
         </div>
@@ -472,6 +481,79 @@
                                     <li><strong>Custom research reports:</strong> Generate summaries of your research activity</li>
                                 </ul>
                             </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Keyboard Shortcuts Section -->
+            <div class="faq-section" style="margin-top: 3rem;">
+                <h2 class="section-title">
+                    <i class="fas fa-keyboard"></i>
+                    Keyboard Shortcuts
+                </h2>
+                <p style="color: var(--text-secondary); margin-bottom: 2rem; text-align: center;">
+                    Speed up your workflow with these keyboard shortcuts
+                </p>
+
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <div style="background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 15px; padding: 1.5rem;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                                <span style="color: var(--text-primary); font-weight: 500;">Focus Search Box</span>
+                                <kbd style="background: rgba(99, 102, 241, 0.2); color: var(--accent-color); padding: 0.25rem 0.75rem; border-radius: 5px; font-size: 0.9rem;">Ctrl + K</kbd>
+                            </div>
+                            <p style="color: var(--text-secondary); font-size: 0.9rem; margin: 0;">Quickly jump to the search box from anywhere</p>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div style="background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 15px; padding: 1.5rem;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                                <span style="color: var(--text-primary); font-weight: 500;">Go to Bookmarks</span>
+                                <kbd style="background: rgba(99, 102, 241, 0.2); color: var(--accent-color); padding: 0.25rem 0.75rem; border-radius: 5px; font-size: 0.9rem;">Ctrl + B</kbd>
+                            </div>
+                            <p style="color: var(--text-secondary); font-size: 0.9rem; margin: 0;">Navigate to your bookmarked cases</p>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div style="background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 15px; padding: 1.5rem;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                                <span style="color: var(--text-primary); font-weight: 500;">Search History</span>
+                                <kbd style="background: rgba(99, 102, 241, 0.2); color: var(--accent-color); padding: 0.25rem 0.75rem; border-radius: 5px; font-size: 0.9rem;">Ctrl + H</kbd>
+                            </div>
+                            <p style="color: var(--text-secondary); font-size: 0.9rem; margin: 0;">View your recent searches</p>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div style="background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 15px; padding: 1.5rem;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                                <span style="color: var(--text-primary); font-weight: 500;">Submit Search</span>
+                                <kbd style="background: rgba(99, 102, 241, 0.2); color: var(--accent-color); padding: 0.25rem 0.75rem; border-radius: 5px; font-size: 0.9rem;">Ctrl + Enter</kbd>
+                            </div>
+                            <p style="color: var(--text-secondary); font-size: 0.9rem; margin: 0;">Execute your search query</p>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div style="background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 15px; padding: 1.5rem;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                                <span style="color: var(--text-primary); font-weight: 500;">Clear/Close</span>
+                                <kbd style="background: rgba(99, 102, 241, 0.2); color: var(--accent-color); padding: 0.25rem 0.75rem; border-radius: 5px; font-size: 0.9rem;">Esc</kbd>
+                            </div>
+                            <p style="color: var(--text-secondary); font-size: 0.9rem; margin: 0;">Clear search or close dropdowns</p>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div style="background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 15px; padding: 1.5rem;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                                <span style="color: var(--text-primary); font-weight: 500;">Toggle Theme</span>
+                                <kbd style="background: rgba(99, 102, 241, 0.2); color: var(--accent-color); padding: 0.25rem 0.75rem; border-radius: 5px; font-size: 0.9rem;">Click Icon</kbd>
+                            </div>
+                            <p style="color: var(--text-secondary); font-size: 0.9rem; margin: 0;">Switch between dark and light modes</p>
                         </div>
                     </div>
                 </div>
@@ -742,5 +824,6 @@
         }
         updateAuthLinks();
     </script>
+    <script src="theme-script.js"></script>
 </body>
 </html>

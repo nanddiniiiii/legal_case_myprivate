@@ -273,6 +273,16 @@
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(100%); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        @keyframes slideOut {
+            from { opacity: 1; transform: translateX(0); }
+            to { opacity: 0; transform: translateX(100%); }
+        }
         
         /* Utility Classes */
         .gradient-text {
@@ -280,6 +290,30 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+        }
+
+        /* Light Theme Overrides */
+        [data-bs-theme="light"] {
+            --dark-bg: #f8f9fa;
+            --card-bg: #ffffff;
+            --text-primary: #1a202c;
+            --text-secondary: #4a5568;
+            --border-color: #e2e8f0;
+        }
+
+        [data-bs-theme="light"] body {
+            background: var(--dark-bg);
+            color: var(--text-primary);
+        }
+
+        [data-bs-theme="light"] .navbar {
+            background: rgba(255, 255, 255, 0.95);
+        }
+
+        [data-bs-theme="light"] .result-card,
+        [data-bs-theme="light"] .filters-dropdown {
+            background: var(--card-bg);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
     </style>
 </head>
@@ -296,16 +330,25 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto" id="navbar-auth-links">
-                    <li class="nav-item"><a class="nav-link active" href="index.html">Search Cases</a></li>
-                    <li class="nav-item"><a class="nav-link" href="browse.html">Browse</a></li>
-                    <li class="nav-item"><a class="nav-link" href="recent-searches.html">Recent Searches</a></li>
-                    <li class="nav-item"><a class="nav-link" href="profile.html">My Account</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="index.html"><i class="fas fa-search me-1"></i>Search</a></li>
+                    <li class="nav-item"><a class="nav-link" href="browse.html"><i class="fas fa-folder-open me-1"></i>Browse</a></li>
+                    <li class="nav-item"><a class="nav-link" href="bookmarks.html"><i class="fas fa-bookmark me-1"></i>Bookmarks</a></li>
+                    <li class="nav-item"><a class="nav-link" href="analytics-dashboard.html"><i class="fas fa-chart-bar me-1"></i>Analytics</a></li>
+                    <li class="nav-item"><a class="nav-link" href="recent-searches.html"><i class="fas fa-history me-1"></i>History</a></li>
+                    <li class="nav-item"><a class="nav-link" href="compare.html"><i class="fas fa-columns me-1"></i>Compare</a></li>
+                    <li class="nav-item"><a class="nav-link" href="help.html"><i class="fas fa-question-circle me-1"></i>Help</a></li>
+                    <li class="nav-item">
+                        <a id="themeToggle" class="nav-link" href="#" style="cursor: pointer;" title="Toggle Theme">
+                            <i class="fas fa-moon"></i>
+                        </a>
+                    </li>
+                    <li class="nav-item"><a class="nav-link" href="profile.html"><i class="fas fa-user me-1"></i>Account</a></li>
                     <li id="auth-links"></li>
                 </ul>
             </div>
         </div>
     </nav>
-wh
+
     <!-- Hero Section -->
     <section class="hero-section">
         <div class="container">
@@ -315,11 +358,26 @@ wh
                 
                 <div class="search-container">
                     <form id="searchForm">
-                        <div class="search-wrapper">
-                            <input type="text" class="search-input" id="searchQuery" 
-                                   placeholder="Describe your legal case or query..." required>
-                            <button class="search-btn" type="submit">
-                                <i class="fas fa-search"></i>
+                        <div style="display: flex; gap: 0.75rem; align-items: center;">
+                            <div class="search-wrapper" style="flex: 1;">
+                                <input type="text" class="search-input" id="searchQuery" 
+                                       placeholder="Describe your legal case or query..." required>
+                                <button class="search-btn" type="submit">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Export Buttons -->
+                        <div style="margin-top: 1rem; display: flex; gap: 0.5rem; justify-content: center; flex-wrap: wrap;">
+                            <button type="button" class="btn btn-sm btn-outline-light" onclick="exportResults('csv')" style="border-radius: 8px; display: none;" id="exportCsv">
+                                <i class="fas fa-file-csv"></i> Export CSV
+                            </button>
+                            <button type="button" class="btn btn-sm btn-outline-light" onclick="exportResults('json')" style="border-radius: 8px; display: none;" id="exportJson">
+                                <i class="fas fa-file-code"></i> Export JSON
+                            </button>
+                            <button type="button" class="btn btn-sm btn-outline-light" onclick="exportResults('pdf')" style="border-radius: 8px; display: none;" id="exportPdf">
+                                <i class="fas fa-file-pdf"></i> Export PDF
                             </button>
                         </div>
                     </form>
@@ -344,32 +402,64 @@ wh
     </section>
     
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     
     <script>
+        // Load statistics on page load
+        async function loadStats() {
+            try {
+                const response = await fetch('http://127.0.0.1:5000/api/stats');
+                const stats = await response.json();
+                document.getElementById('stat-total').textContent = stats.total_cases.toLocaleString();
+                document.getElementById('stat-categories').textContent = stats.total_categories;
+                document.getElementById('stat-recent').textContent = stats.recent_additions;
+            } catch (error) {
+                console.error('Failed to load stats:', error);
+            }
+        }
+        loadStats();
+        
         // --- Main Search Logic ---
         document.getElementById('searchForm').addEventListener('submit', function (event) {
             event.preventDefault();
             const query = document.getElementById('searchQuery').value.trim();
-            performSearch(query);
+            console.log('🔍 Search form submitted with query:', query);
+            if (query) {
+                performSearch(query);
+            } else {
+                console.warn('⚠️ Empty query - search not performed');
+            }
         });
 
         async function performSearch(query) {
             const resultsContainer = document.getElementById('results-container');
             if (!query) return;
 
+            // Save search state to sessionStorage
+            const searchState = {
+                query,
+                timestamp: Date.now()
+            };
+            sessionStorage.setItem('lastSearchState', JSON.stringify(searchState));
+
+            const startTime = performance.now();
             console.log(`--- Starting search for: "${query}" ---`);
             
-            // 1. Show loading state
+            // 1. Show loading state with progress
             resultsContainer.innerHTML = `
                 <div class="text-center" style="padding: 4rem 2rem;">
                     <div class="loading-spinner mx-auto mb-3"></div>
                     <h4 class="gradient-text">Analyzing with AI...</h4>
-                    <p style="color: var(--text-secondary);">Performing Hybrid Search...</p>
+                    <p style="color: var(--text-secondary);">Searching through legal cases...</p>
+                    <p style="color: var(--text-secondary); font-size: 0.85rem; margin-top: 1rem;">
+                        <i class="fas fa-lightbulb me-2"></i>Results are cached for faster subsequent searches
+                    </p>
                 </div>`;
 
             // 2. Call the backend API
             try {
-                const apiUrl = `http://127.0.0.1:5000/search?query=${encodeURIComponent(query)}`;
+                let apiUrl = `http://127.0.0.1:5000/search?query=${encodeURIComponent(query)}`;
+                
                 console.log(`Contacting API at: ${apiUrl}`);
 
                 // Get user email from localStorage for search tracking
@@ -386,11 +476,19 @@ wh
                     throw new Error(`API returned an error: ${response.status} ${response.statusText}`);
                 }
 
-                const results = await response.json();
-                console.log('Parsed JSON results:', results);
+                const data = await response.json();
+                const endTime = performance.now();
+                const searchTime = ((endTime - startTime) / 1000).toFixed(2);
+                console.log('Parsed JSON data:', data);
+                console.log(`Search completed in ${searchTime}s`);
 
-                // 3. Display the results
-                displayResults(results);
+                // Handle both /search and /api/advanced-search response formats
+                const results = data.results || data;
+                
+                // Save results to sessionStorage
+                sessionStorage.setItem('lastSearchResults', JSON.stringify({ results, searchTime }));
+                
+                displayResults(results, searchTime);
 
             } catch (error) {
                 console.error('--- A critical error occurred during fetch ---:', error);
@@ -399,7 +497,10 @@ wh
         }
 
         // --- UI Display Functions ---
-        function displayResults(results) {
+        let currentResults = []; // Store for export
+        
+        function displayResults(results, searchTime = null) {
+            currentResults = results; // Store for export
             const resultsContainer = document.getElementById('results-container');
             
             if (!results || results.length === 0) {
@@ -412,7 +513,23 @@ wh
                 return;
             }
 
-            let html = `<h5 class="mb-4">Found ${results.length} relevant cases (ranked by AI):</h5>`;
+            const timeInfo = searchTime ? ` <span style="color: var(--text-secondary); font-size: 0.9rem; font-weight: 400;">(${searchTime}s)</span>` : '';
+            let html = `
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h5>Found ${results.length} relevant cases (ranked by AI)${timeInfo}</h5>
+                    <div class="btn-group">
+                        <button class="btn btn-sm btn-outline-light" onclick="exportToCSV()" style="border-radius: 10px 0 0 10px;">
+                            <i class="fas fa-file-csv me-1"></i>CSV
+                        </button>
+                        <button class="btn btn-sm btn-outline-light" onclick="exportToJSON()" style="border-radius: 0;">
+                            <i class="fas fa-file-code me-1"></i>JSON
+                        </button>
+                        <button class="btn btn-sm btn-outline-light" onclick="exportToPDF()" style="border-radius: 0 10px 10px 0;">
+                            <i class="fas fa-file-pdf me-1"></i>PDF
+                        </button>
+                    </div>
+                </div>
+            `;
             results.forEach((result, index) => {
                 // Format: "Petitioner vs Respondent"
                 const petitioner = result.title || 'Unknown';
@@ -436,7 +553,7 @@ wh
                             <button class="btn btn-primary" onclick="viewCaseDetails('${caseNumber}')" style="background: var(--primary-gradient); border: none; border-radius: 10px; padding: 0.5rem 1.5rem;">
                                 <i class="fas fa-eye me-2"></i>View Details
                             </button>
-                            <button class="btn btn-outline-light" style="border-radius: 10px; padding: 0.5rem 1.5rem;">
+                            <button class="btn btn-outline-light" onclick="saveBookmark('${caseNumber}', event)" style="border-radius: 10px; padding: 0.5rem 1.5rem;">
                                 <i class="fas fa-bookmark me-2"></i>Save
                             </button>
                         </div>
@@ -483,6 +600,138 @@ wh
             }
         }
         updateAuthLinks();
+        
+        // --- Export Functions ---
+        function exportToCSV() {
+            if (!currentResults || currentResults.length === 0) {
+                alert('No results to export');
+                return;
+            }
+            
+            let csv = 'Case Number,Title,Parties,Score,Description\n';
+            currentResults.forEach(result => {
+                const caseNumber = (result.case_number || '').replace(/,/g, ';');
+                const title = (result.title || '').replace(/,/g, ';').replace(/"/g, '""');
+                const parties = (result.parties || '').replace(/,/g, ';').replace(/"/g, '""');
+                const score = result.score ? result.score.toFixed(1) : 'N/A';
+                const description = (result.description || result.judgment_text || '').replace(/,/g, ';').replace(/"/g, '""').substring(0, 500);
+                csv += `"${caseNumber}","${title}","${parties}","${score}","${description}"\n`;
+            });
+            
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `legal_search_results_${new Date().toISOString().split('T')[0]}.csv`;
+            a.click();
+            window.URL.revokeObjectURL(url);
+        }
+        
+        function exportToJSON() {
+            if (!currentResults || currentResults.length === 0) {
+                alert('No results to export');
+                return;
+            }
+            
+            const json = JSON.stringify(currentResults, null, 2);
+            const blob = new Blob([json], { type: 'application/json' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `legal_search_results_${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+            window.URL.revokeObjectURL(url);
+        }
+        
+        function exportToPDF() {
+            if (!currentResults || currentResults.length === 0) {
+                alert('No results to export');
+                return;
+            }
+            
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            
+            // Header
+            doc.setFontSize(20);
+            doc.setTextColor(99, 102, 241);
+            doc.text('LegalSearch Pro', 105, 20, { align: 'center' });
+            
+            doc.setFontSize(12);
+            doc.setTextColor(0, 0, 0);
+            doc.text('Search Results Report', 105, 28, { align: 'center' });
+            
+            doc.setFontSize(10);
+            doc.setTextColor(100, 100, 100);
+            doc.text(`Generated: ${new Date().toLocaleString()}`, 105, 35, { align: 'center' });
+            doc.text(`Total Results: ${currentResults.length}`, 105, 40, { align: 'center' });
+            
+            // Line separator
+            doc.setDrawColor(99, 102, 241);
+            doc.setLineWidth(0.5);
+            doc.line(20, 45, 190, 45);
+            
+            let yPosition = 55;
+            const pageHeight = doc.internal.pageSize.height;
+            const margin = 20;
+            const maxWidth = 170;
+            
+            currentResults.forEach((result, index) => {
+                // Check if we need a new page
+                if (yPosition > pageHeight - 40) {
+                    doc.addPage();
+                    yPosition = 20;
+                }
+                
+                // Case number and score
+                doc.setFontSize(12);
+                doc.setTextColor(99, 102, 241);
+                doc.text(`${index + 1}. ${result.case_number || 'N/A'}`, margin, yPosition);
+                
+                const score = result.score ? `${result.score.toFixed(1)}%` : 'N/A';
+                doc.setFontSize(10);
+                doc.text(`Score: ${score}`, 190, yPosition, { align: 'right' });
+                
+                yPosition += 7;
+                
+                // Title
+                doc.setFontSize(11);
+                doc.setTextColor(0, 0, 0);
+                const title = `${result.title || 'Unknown'} vs ${result.parties || 'Unknown'}`;
+                const titleLines = doc.splitTextToSize(title, maxWidth);
+                doc.text(titleLines, margin, yPosition);
+                yPosition += titleLines.length * 5 + 3;
+                
+                // Description
+                doc.setFontSize(9);
+                doc.setTextColor(80, 80, 80);
+                const description = (result.description || result.judgment_text || 'No description available').substring(0, 400) + '...';
+                const descLines = doc.splitTextToSize(description, maxWidth);
+                doc.text(descLines, margin, yPosition);
+                yPosition += descLines.length * 4 + 8;
+                
+                // Separator line
+                if (index < currentResults.length - 1) {
+                    doc.setDrawColor(200, 200, 200);
+                    doc.setLineWidth(0.2);
+                    doc.line(margin, yPosition, 190, yPosition);
+                    yPosition += 6;
+                }
+            });
+            
+            // Footer on last page
+            const pageCount = doc.internal.getNumberOfPages();
+            for (let i = 1; i <= pageCount; i++) {
+                doc.setPage(i);
+                doc.setFontSize(8);
+                doc.setTextColor(150, 150, 150);
+                doc.text(`Page ${i} of ${pageCount}`, 105, pageHeight - 10, { align: 'center' });
+                doc.text('LegalSearch Pro - AI-Powered Legal Research', 105, pageHeight - 5, { align: 'center' });
+            }
+            
+            // Save
+            doc.save(`legal_search_results_${new Date().toISOString().split('T')[0]}.pdf`);
+        }
 
         // Function to navigate to case details page
         function viewCaseDetails(caseNumber) {
@@ -493,7 +742,75 @@ wh
             // Navigate to case-details.html with case number as query parameter
             window.location.href = `case-details.html?case=${encodeURIComponent(caseNumber)}`;
         }
+
+        // Keyboard Shortcuts
+        document.addEventListener('keydown', (e) => {
+            // Ctrl+K or Cmd+K: Focus search box
+            if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+                e.preventDefault();
+                document.getElementById('searchInput').focus();
+            }
+            
+            // Ctrl+B or Cmd+B: Go to bookmarks
+            if ((e.ctrlKey || e.metaKey) && e.key === 'b') {
+                e.preventDefault();
+                window.location.href = 'bookmarks.html';
+            }
+            
+            // Ctrl+H or Cmd+H: Go to search history
+            if ((e.ctrlKey || e.metaKey) && e.key === 'h') {
+                e.preventDefault();
+                window.location.href = 'recent-searches.html';
+            }
+            
+            // Esc: Clear search or close filters
+            if (e.key === 'Escape') {
+                const filtersDropdown = document.getElementById('filtersDropdown');
+                if (filtersDropdown && filtersDropdown.classList.contains('show')) {
+                    filtersDropdown.classList.remove('show');
+                } else {
+                    document.getElementById('searchInput').value = '';
+                    document.getElementById('searchInput').blur();
+                }
+            }
+            
+            // Ctrl+Enter: Submit search
+            if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+                e.preventDefault();
+                performSearch();
+            }
+        });
+        
+        // Restore last search state if returning from case details
+        window.addEventListener('pageshow', function(event) {
+            const savedState = sessionStorage.getItem('lastSearchState');
+            const savedResults = sessionStorage.getItem('lastSearchResults');
+            
+            if (savedState && savedResults) {
+                const state = JSON.parse(savedState);
+                const { results, searchTime } = JSON.parse(savedResults);
+                
+                // Check if state is recent (within 30 minutes)
+                if (Date.now() - state.timestamp < 30 * 60 * 1000) {
+                    // Restore form values
+                    document.getElementById('searchQuery').value = state.query;
+                    document.getElementById('categoryFilter').value = state.category || '';
+                    document.getElementById('dateFrom').value = state.dateFrom || '';
+                    document.getElementById('dateTo').value = state.dateTo || '';
+                    document.getElementById('courtFilter').value = state.court || '';
+                    document.getElementById('yearFilter').value = state.year || '';
+                    if (document.getElementById('advancedModeToggle')) {
+                        document.getElementById('advancedModeToggle').checked = state.useAdvanced || false;
+                    }
+                    
+                    // Restore results
+                    displayResults(results, searchTime);
+                    console.log('✅ Restored previous search state');
+                }
+            }
+        });
     </script>
+    <script src="theme-script.js"></script>
 </body>
 </html>
 

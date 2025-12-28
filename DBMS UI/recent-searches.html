@@ -217,12 +217,21 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item"><a class="nav-link" href="index.html">Search Cases</a></li>
-                    <li class="nav-item"><a class="nav-link" href="browse.html">Browse</a></li>
-                    <li class="nav-item"><a class="nav-link active" href="recent-searches.html">Recent Searches</a></li>
-                    <li class="nav-item"><a class="nav-link" href="help.html">Help</a></li>
-                    <li class="nav-item"><a class="nav-link" href="profile.html">My Account</a></li>
+                <ul class="navbar-nav ms-auto" id="navbar-auth-links">
+                    <li class="nav-item"><a class="nav-link" href="index.html"><i class="fas fa-search me-1"></i>Search</a></li>
+                    <li class="nav-item"><a class="nav-link" href="browse.html"><i class="fas fa-folder-open me-1"></i>Browse</a></li>
+                    <li class="nav-item"><a class="nav-link" href="bookmarks.html"><i class="fas fa-bookmark me-1"></i>Bookmarks</a></li>
+                    <li class="nav-item"><a class="nav-link" href="analytics-dashboard.html"><i class="fas fa-chart-bar me-1"></i>Analytics</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="recent-searches.html"><i class="fas fa-history me-1"></i>History</a></li>
+                    <li class="nav-item"><a class="nav-link" href="compare.html"><i class="fas fa-columns me-1"></i>Compare</a></li>
+                    <li class="nav-item"><a class="nav-link" href="help.html"><i class="fas fa-question-circle me-1"></i>Help</a></li>
+                    <li class="nav-item">
+                        <a id="themeToggle" class="nav-link" href="#" style="cursor: pointer;" title="Toggle Theme">
+                            <i class="fas fa-moon"></i>
+                        </a>
+                    </li>
+                    <li class="nav-item"><a class="nav-link" href="profile.html"><i class="fas fa-user me-1"></i>Account</a></li>
+                    <li id="auth-links"></li>
                 </ul>
             </div>
         </div>
@@ -294,31 +303,82 @@
         });
 
         async function loadRecentSearches() {
+            const userEmail = localStorage.getItem('userEmail');
+            
+            console.log('Loading recent searches for:', userEmail);
+            
+            if (!userEmail) {
+                console.error('No user email found - redirecting to login');
+                document.getElementById('loadingSpinner').style.display = 'none';
+                document.getElementById('emptyState').style.display = 'block';
+                document.getElementById('emptyState').innerHTML = `
+                    <i class="fas fa-user-lock"></i>
+                    <h3>Login Required</h3>
+                    <p>Please login to view your search history.</p>
+                    <a href="login.html" class="btn-action" style="margin-top: 1rem; display: inline-block;">
+                        <i class="fas fa-sign-in-alt me-2"></i>Login
+                    </a>
+                `;
+                return;
+            }
+
             try {
-                const response = await fetch(`http://localhost:5000/recent-searches?email=${encodeURIComponent(currentUserEmail)}&limit=20`);
-                const searches = await response.json();
+                const apiUrl = 'http://127.0.0.1:5000/api/search-history';
+                console.log('Fetching from:', apiUrl);
+                
+                const response = await fetch(apiUrl, {
+                    headers: {
+                        'X-User-Email': userEmail
+                    }
+                });
+
+                console.log('Response status:', response.status);
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+
+                const data = await response.json();
+                console.log('Received data:', data);
+                
+                const searches = data.searches || [];
+                console.log('Total searches:', searches.length);
+                
+                // Transform searches to add time_ago
+                const transformedSearches = searches.map(search => ({
+                    ...search,
+                    time_ago: getTimeAgo(search.searched_at),
+                    results_count: search.result_count || 0
+                }));
                 
                 // Hide loading spinner
                 document.getElementById('loadingSpinner').style.display = 'none';
                 
-                if (searches.length === 0) {
+                if (transformedSearches.length === 0) {
+                    console.log('No searches found - showing empty state');
                     // Show empty state
                     document.getElementById('emptyState').style.display = 'block';
                 } else {
+                    console.log('Rendering', transformedSearches.length, 'searches');
                     // Show search list
                     const searchListContainer = document.getElementById('searchList');
                     searchListContainer.innerHTML = '';
                     
-                    searches.forEach(search => {
+                    transformedSearches.forEach((search, index) => {
+                        console.log('Creating search item', index + 1, ':', search.query);
                         const searchItem = createSearchItem(search);
                         searchListContainer.appendChild(searchItem);
                     });
                     
                     searchListContainer.style.display = 'block';
+                    console.log('All searches rendered successfully');
                     
                     // Add click handlers for action buttons
                     addActionHandlers();
                 }
+                
+                allSearches = transformedSearches;
+                filteredSearches = transformedSearches;
             } catch (error) {
                 console.error('Error loading recent searches:', error);
                 document.getElementById('loadingSpinner').style.display = 'none';
@@ -326,12 +386,29 @@
                 document.getElementById('emptyState').innerHTML = `
                     <i class="fas fa-exclamation-triangle"></i>
                     <h3>Error Loading Searches</h3>
-                    <p>Unable to load your search history. Please try again later.</p>
+                    <p>${error.message}</p>
+                    <p style="font-size: 0.9rem; color: #718096; margin-top: 0.5rem;">
+                        Make sure the API server is running at http://127.0.0.1:5000
+                    </p>
                     <a href="index.html" class="btn-action" style="margin-top: 1rem; display: inline-block;">
                         <i class="fas fa-search me-2"></i>Start Searching
                     </a>
                 `;
             }
+        }
+
+        function getTimeAgo(dateString) {
+            if (!dateString) return 'Unknown';
+            
+            const date = new Date(dateString);
+            const now = new Date();
+            const seconds = Math.floor((now - date) / 1000);
+            
+            if (seconds < 60) return 'just now';
+            if (seconds < 3600) return `${Math.floor(seconds / 60)} minutes ago`;
+            if (seconds < 86400) return `${Math.floor(seconds / 3600)} hours ago`;
+            if (seconds < 604800) return `${Math.floor(seconds / 86400)} days ago`;
+            return date.toLocaleDateString();
         }
 
         function createSearchItem(search) {
@@ -395,23 +472,47 @@
             window.location.href = `index.html?q=${encodeURIComponent(query)}`;
         }
 
-        function clearHistory() {
+        async function clearHistory() {
+            const userEmail = localStorage.getItem('userEmail');
+            
+            if (!userEmail) {
+                window.location.href = 'login.html';
+                return;
+            }
+
             if (confirm('Are you sure you want to clear all search history? This action cannot be undone.')) {
-                // TODO: Implement API call to clear search history
-                document.getElementById('searchList').style.display = 'none';
-                document.getElementById('emptyState').style.display = 'block';
-                document.getElementById('emptyState').innerHTML = `
-                    <div class="empty-state">
-                        <i class="fas fa-history"></i>
-                        <h3>No Search History</h3>
-                        <p>Your search history has been cleared. Start searching to see your queries here.</p>
-                        <a href="index.html" class="btn-action" style="margin-top: 1rem; display: inline-block;">
-                            <i class="fas fa-search me-2"></i>Start Searching
-                        </a>
-                    </div>
-                `;
+                try {
+                    const response = await fetch('http://127.0.0.1:5000/clear-search-history', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ email: userEmail })
+                    });
+
+                    if (response.ok) {
+                        document.getElementById('searchList').style.display = 'none';
+                        document.getElementById('emptyState').style.display = 'block';
+                        document.getElementById('emptyState').innerHTML = `
+                            <div class="empty-state">
+                                <i class="fas fa-check-circle" style="color: var(--success-color); font-size: 3rem;"></i>
+                                <h3>Search History Cleared</h3>
+                                <p>Your search history has been cleared successfully.</p>
+                                <a href="index.html" class="btn-action" style="margin-top: 1rem; display: inline-block;">
+                                    <i class="fas fa-search me-2"></i>Start Searching
+                                </a>
+                            </div>
+                        `;
+                    } else {
+                        alert('Failed to clear search history. Please try again.');
+                    }
+                } catch (error) {
+                    console.error('Error clearing history:', error);
+                    alert('An error occurred while clearing search history.');
+                }
             }
         }
     </script>
+    <script src="theme-script.js"></script>
 </body>
 </html>

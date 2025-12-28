@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analytics Dashboard - Legal Case DBMS</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .dashboard-container {
+            max-width: 1400px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+        .dashboard-header {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        .stat-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            transition: transform 0.3s;
+        }
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        }
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            margin-bottom: 15px;
+        }
+        .chart-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            height: 400px;
+        }
+        .chart-container {
+            position: relative;
+            height: 320px;
+        }
+        .purple-gradient { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
+        .blue-gradient { background: linear-gradient(135deg, #48c6ef 0%, #6f86d6 100%); color: white; }
+        .green-gradient { background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); color: white; }
+        .orange-gradient { background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); color: white; }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark" style="background: rgba(0,0,0,0.3);">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="index.html">
+                <i class="fas fa-balance-scale"></i> Legal Case DBMS
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="index.html">Search</a></li>
+                    <li class="nav-item"><a class="nav-link" href="browse.html">Browse</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="analytics.html">Analytics</a></li>
+                    <li class="nav-item"><a class="nav-link" href="help.html">Help</a></li>
+                    <li class="nav-item"><a class="nav-link" href="profile.html">Profile</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="dashboard-container">
+        <!-- Header -->
+        <div class="dashboard-header">
+            <h1><i class="fas fa-chart-line"></i> Analytics Dashboard</h1>
+            <p class="text-muted mb-0">Comprehensive insights into legal case data and search patterns</p>
+        </div>
+
+        <!-- Summary Stats -->
+        <div class="row" id="statsRow">
+            <div class="col-md-3 col-sm-6">
+                <div class="stat-card">
+                    <div class="stat-icon purple-gradient">
+                        <i class="fas fa-gavel"></i>
+                    </div>
+                    <h3 class="mb-0" id="totalCases">-</h3>
+                    <p class="text-muted mb-0">Total Cases</p>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6">
+                <div class="stat-card">
+                    <div class="stat-icon blue-gradient">
+                        <i class="fas fa-tags"></i>
+                    </div>
+                    <h3 class="mb-0" id="totalCategories">-</h3>
+                    <p class="text-muted mb-0">Categories</p>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6">
+                <div class="stat-card">
+                    <div class="stat-icon green-gradient">
+                        <i class="fas fa-university"></i>
+                    </div>
+                    <h3 class="mb-0" id="totalCourts">-</h3>
+                    <p class="text-muted mb-0">Courts</p>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6">
+                <div class="stat-card">
+                    <div class="stat-icon orange-gradient">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <h3 class="mb-0" id="totalSearches">-</h3>
+                    <p class="text-muted mb-0">Total Searches</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts Row 1 -->
+        <div class="row">
+            <div class="col-md-6">
+                <div class="chart-card">
+                    <h5><i class="fas fa-chart-pie"></i> Cases by Category</h5>
+                    <div class="chart-container">
+                        <canvas id="categoryChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="chart-card">
+                    <h5><i class="fas fa-chart-bar"></i> Cases by Year</h5>
+                    <div class="chart-container">
+                        <canvas id="yearChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts Row 2 -->
+        <div class="row">
+            <div class="col-md-6">
+                <div class="chart-card">
+                    <h5><i class="fas fa-university"></i> Top Courts</h5>
+                    <div class="chart-container">
+                        <canvas id="courtChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="chart-card">
+                    <h5><i class="fas fa-fire"></i> Popular Searches</h5>
+                    <div class="chart-container">
+                        <canvas id="searchChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Most Bookmarked Cases -->
+        <div class="row">
+            <div class="col-12">
+                <div class="stat-card">
+                    <h5><i class="fas fa-bookmark"></i> Most Bookmarked Cases</h5>
+                    <div id="bookmarksList" class="mt-3">
+                        <p class="text-muted">Loading...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const API_URL = 'http://127.0.0.1:5000';
+        let charts = {};
+
+        // Color palettes
+        const colorPalette = [
+            'rgba(102, 126, 234, 0.8)',
+            'rgba(118, 75, 162, 0.8)',
+            'rgba(72, 198, 239, 0.8)',
+            'rgba(111, 134, 214, 0.8)',
+            'rgba(17, 153, 142, 0.8)',
+            'rgba(56, 239, 125, 0.8)',
+            'rgba(250, 112, 154, 0.8)',
+            'rgba(254, 225, 64, 0.8)',
+            'rgba(255, 107, 107, 0.8)',
+            'rgba(72, 219, 251, 0.8)',
+            'rgba(253, 203, 110, 0.8)',
+            'rgba(162, 155, 254, 0.8)'
+        ];
+
+        async function loadAnalytics() {
+            try {
+                // Load basic stats
+                const statsResponse = await fetch(`${API_URL}/api/stats`);
+                const statsData = await statsResponse.json();
+                
+                document.getElementById('totalCases').textContent = statsData.total_cases.toLocaleString();
+                document.getElementById('totalCategories').textContent = statsData.total_categories;
+                document.getElementById('totalSearches').textContent = statsData.total_searches.toLocaleString();
+
+                // Load analytics data
+                const analyticsResponse = await fetch(`${API_URL}/api/analytics`);
+                const analytics = await analyticsResponse.json();
+
+                // Update courts count
+                document.getElementById('totalCourts').textContent = analytics.top_courts.length;
+
+                // Create charts
+                createCategoryChart(analytics.category_distribution);
+                createYearChart(analytics.cases_by_year);
+                createCourtChart(analytics.top_courts);
+                createSearchChart(analytics.popular_searches);
+                displayBookmarks(analytics.popular_bookmarks);
+
+            } catch (error) {
+                console.error('Error loading analytics:', error);
+                alert('Failed to load analytics data. Please ensure the API server is running.');
+            }
+        }
+
+        function createCategoryChart(data) {
+            const ctx = document.getElementById('categoryChart').getContext('2d');
+            if (charts.category) charts.category.destroy();
+            
+            charts.category = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: data.map(d => d.category),
+                    datasets: [{
+                        data: data.map(d => d.count),
+                        backgroundColor: colorPalette,
+                        borderWidth: 2,
+                        borderColor: '#fff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                            labels: { boxWidth: 15, padding: 10 }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                    const percentage = ((context.parsed / total) * 100).toFixed(1);
+                                    return `${context.label}: ${context.parsed} (${percentage}%)`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function createYearChart(data) {
+            const ctx = document.getElementById('yearChart').getContext('2d');
+            if (charts.year) charts.year.destroy();
+            
+            charts.year = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: data.map(d => d.year),
+                    datasets: [{
+                        label: 'Cases',
+                        data: data.map(d => d.count),
+                        backgroundColor: 'rgba(102, 126, 234, 0.8)',
+                        borderColor: 'rgba(102, 126, 234, 1)',
+                        borderWidth: 2,
+                        borderRadius: 5
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: { precision: 0 }
+                        }
+                    }
+                }
+            });
+        }
+
+        function createCourtChart(data) {
+            const ctx = document.getElementById('courtChart').getContext('2d');
+            if (charts.court) charts.court.destroy();
+            
+            charts.court = new Chart(ctx, {
+                type: 'horizontalBar',
+                data: {
+                    labels: data.map(d => d.court.length > 30 ? d.court.substring(0, 30) + '...' : d.court),
+                    datasets: [{
+                        label: 'Cases',
+                        data: data.map(d => d.count),
+                        backgroundColor: 'rgba(17, 153, 142, 0.8)',
+                        borderColor: 'rgba(17, 153, 142, 1)',
+                        borderWidth: 2,
+                        borderRadius: 5
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            ticks: { precision: 0 }
+                        }
+                    }
+                }
+            });
+        }
+
+        function createSearchChart(data) {
+            const ctx = document.getElementById('searchChart').getContext('2d');
+            if (charts.search) charts.search.destroy();
+            
+            if (data.length === 0) {
+                ctx.font = '16px Arial';
+                ctx.fillStyle = '#999';
+                ctx.textAlign = 'center';
+                ctx.fillText('No search data available yet', ctx.canvas.width / 2, ctx.canvas.height / 2);
+                return;
+            }
+            
+            charts.search = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: data.map(d => d.query.length > 20 ? d.query.substring(0, 20) + '...' : d.query),
+                    datasets: [{
+                        label: 'Searches',
+                        data: data.map(d => d.count),
+                        backgroundColor: 'rgba(250, 112, 154, 0.8)',
+                        borderColor: 'rgba(250, 112, 154, 1)',
+                        borderWidth: 2,
+                        borderRadius: 5
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: { precision: 0 }
+                        }
+                    }
+                }
+            });
+        }
+
+        function displayBookmarks(data) {
+            const container = document.getElementById('bookmarksList');
+            
+            if (data.length === 0) {
+                container.innerHTML = '<p class="text-muted">No bookmarks yet</p>';
+                return;
+            }
+            
+            let html = '<div class="table-responsive"><table class="table table-hover"><thead><tr><th>Rank</th><th>Case Number</th><th>Bookmarks</th></tr></thead><tbody>';
+            
+            data.forEach((item, index) => {
+                html += `
+                    <tr>
+                        <td><strong>${index + 1}</strong></td>
+                        <td><a href="case-details.html?case=${item.case_number}" class="text-decoration-none">${item.case_number}</a></td>
+                        <td><span class="badge bg-primary">${item.count}</span></td>
+                    </tr>
+                `;
+            });
+            
+            html += '</tbody></table></div>';
+            container.innerHTML = html;
+        }
+
+        // Load analytics on page load
+        document.addEventListener('DOMContentLoaded', loadAnalytics);
+    </script>
+</body>
+</html>

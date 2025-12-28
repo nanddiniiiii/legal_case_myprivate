@@ -49,8 +49,14 @@ cur = conn.cursor()
 
 # Enable pgvector extension
 print("Enabling pgvector extension...")
-cur.execute("CREATE EXTENSION IF NOT EXISTS vector")
-print("✅ pgvector extension enabled")
+try:
+    cur.execute("CREATE EXTENSION IF NOT EXISTS vector")
+    print("✅ pgvector extension enabled")
+    conn.commit()
+except Exception as e:
+    print(f"⚠️  pgvector extension error: {e}")
+    print("Trying to continue without pgvector...")
+    conn.rollback()
 
 # Create cases table
 cur.execute("""

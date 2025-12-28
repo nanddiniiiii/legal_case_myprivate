@@ -41,12 +41,12 @@
         .content-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: var(--primary-gradient); }
         .section-title { font-size: 1.5rem; font-weight: 600; color: var(--text-primary); margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.75rem; }
         .section-title i { color: var(--accent-color); }
-        .sidebar-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 20px; padding: 2rem; position: sticky; top: 100px; animation: slideUp 1s ease-out 0.6s both; margin-bottom: 1.5rem; }
+        .sidebar-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 20px; padding: 2rem; animation: slideUp 1s ease-out 0.6s both; margin-bottom: 1.5rem; }
         .sidebar-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: var(--secondary-gradient); }
         .detail-item { display: flex; align-items: flex-start; gap: 1rem; margin-bottom: 1.5rem; padding: 1rem; background: rgba(255, 255, 255, 0.03); border-radius: 12px; transition: all 0.3s ease; }
         .detail-item:hover { background: rgba(99, 102, 241, 0.1); transform: translateX(5px); }
         .detail-item:last-child { margin-bottom: 0; }
-        .detail-icon { color: var(--accent-color); font-size: 1.25rem; margin-top: 0.125rem; width: 20px; text-align: center; }
+        .detail-icon { color: var(--accent-color); font-size: 1.25rem; margin-top: 0.125rem; width: 20px; text-align: center; flex-shrink: 0; }
         .detail-content strong { color: var(--text-primary); font-weight: 600; display: block; margin-bottom: 0.25rem; font-size: 0.9rem; }
         .detail-content span { color: var(--text-secondary); font-size: 0.85rem; word-break: break-word; }
         .btn-primary-custom { background: var(--primary-gradient); border: none; border-radius: 12px; padding: 0.75rem 1.5rem; font-weight: 600; font-size: 0.95rem; color: white; transition: all 0.3s ease; text-align: center; }
@@ -68,8 +68,49 @@
              color: var(--text-secondary);
              white-space: pre-wrap; /* Preserve line breaks */
              font-size: 0.95rem;
-             max-height: 80vh; /* Limit height if very long */
-             overflow-y: auto; /* Add scrollbar if needed */
+             line-height: 1.8;
+        }
+        
+        /* Smooth scrolling for entire page */
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        /* Fix content card overflow */
+        .content-card {
+            overflow: visible;
+        }
+        
+        /* Better spacing for main content */
+        main.container {
+            padding-top: 2rem;
+            padding-bottom: 4rem;
+        }
+
+        /* Print styles for PDF export */
+        @media print {
+            body {
+                background: white;
+                color: black;
+            }
+            .navbar, .back-nav, .btn-primary-custom, .btn-outline-custom, .sidebar-card {
+                display: none !important;
+            }
+            .content-card {
+                border: none;
+                box-shadow: none;
+                page-break-inside: avoid;
+            }
+            .case-title {
+                color: black;
+                -webkit-text-fill-color: black;
+            }
+            .section-title, .detail-content strong {
+                color: black;
+            }
+            .detail-content span {
+                color: #333;
+            }
         }
     </style>
 </head>
@@ -84,12 +125,21 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item"><a class="nav-link" href="index.html">Search Cases</a></li>
-                    <li class="nav-item"><a class="nav-link" href="browse.html">Browse</a></li>
-                    <li class="nav-item"><a class="nav-link" href="recent-searches.html">Recent Searches</a></li>
-                    <li class="nav-item"><a class="nav-link" href="help.html">Help</a></li>
-                    <li class="nav-item"><a class="nav-link" href="profile.html">My Account</a></li>
+                <ul class="navbar-nav ms-auto" id="navbar-auth-links">
+                    <li class="nav-item"><a class="nav-link" href="index.html"><i class="fas fa-search me-1"></i>Search</a></li>
+                    <li class="nav-item"><a class="nav-link" href="browse.html"><i class="fas fa-folder-open me-1"></i>Browse</a></li>
+                    <li class="nav-item"><a class="nav-link" href="bookmarks.html"><i class="fas fa-bookmark me-1"></i>Bookmarks</a></li>
+                    <li class="nav-item"><a class="nav-link" href="analytics-dashboard.html"><i class="fas fa-chart-bar me-1"></i>Analytics</a></li>
+                    <li class="nav-item"><a class="nav-link" href="recent-searches.html"><i class="fas fa-history me-1"></i>History</a></li>
+                    <li class="nav-item"><a class="nav-link" href="compare.html"><i class="fas fa-columns me-1"></i>Compare</a></li>
+                    <li class="nav-item"><a class="nav-link" href="help.html"><i class="fas fa-question-circle me-1"></i>Help</a></li>
+                    <li class="nav-item">
+                        <a id="themeToggle" class="nav-link" href="#" style="cursor: pointer;" title="Toggle Theme">
+                            <i class="fas fa-moon"></i>
+                        </a>
+                    </li>
+                    <li class="nav-item"><a class="nav-link" href="profile.html"><i class="fas fa-user me-1"></i>Account</a></li>
+                    <li id="auth-links"></li>
                 </ul>
             </div>
         </div>
@@ -115,7 +165,13 @@
         <div id="main-content" class="row g-4" style="display: none;">
             <div class="col-lg-8">
                 <div class="content-card" id="case-overview-card">
-                    <h2 class="section-title"><i class="fas fa-file-alt"></i> Case Overview</h2>
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <h2 class="section-title mb-0"><i class="fas fa-file-alt"></i> Case Overview</h2>
+                        <button id="bookmarkBtn" class="btn btn-outline-primary" onclick="toggleBookmark()" style="border-radius: 10px;">
+                            <i class="far fa-bookmark" id="bookmarkIcon"></i>
+                            <span id="bookmarkText">Bookmark</span>
+                        </button>
+                    </div>
                     <div style="line-height: 1.8;">
                         <h4 style="color: var(--accent-color); margin-bottom: 1rem;" id="overview-title">Case Title</h4>
                         <p id="full-description" style="color: var(--text-secondary); white-space: pre-wrap; font-size: 0.95rem;">Loading description...</p>
@@ -243,6 +299,15 @@
                     fullDescriptionP.textContent = caseData.judgment_text || 'Full description not available.';
                 } else { console.error("Full description paragraph element not found"); }
 
+                // Load Key Facts & Issues using AI extraction
+                loadKeyFacts(caseNumber);
+                
+                // Load Legal Citations & References
+                loadCitations(caseNumber);
+                
+                // Load Similar Cases (AI-powered)
+                loadSimilarCases(caseNumber);
+
                 // Update Sidebar Info Card (Ensure all keys exist or provide defaults)
                  if (infoCardContainer) {
                     infoCardContainer.innerHTML = `
@@ -343,8 +408,7 @@
         }
 
         function exportPDF(caseNumber) {
-             showNotification('PDF export coming soon.', 'info');
-             console.log("Export PDF:", caseNumber);
+             window.print();
         }
 
         // Show notification function
@@ -366,8 +430,483 @@
              document.body.appendChild(modal);
         }
 
+        // Bookmark functionality
+        let currentCaseNumber = null;
+        let isBookmarked = false;
+
+        async function checkBookmarkStatus() {
+            const userEmail = localStorage.getItem('userEmail');
+            if (!userEmail || !currentCaseNumber) return;
+
+            try {
+                const response = await fetch(`http://127.0.0.1:5000/api/bookmarks?user_email=${encodeURIComponent(userEmail)}`);
+                const data = await response.json();
+                
+                isBookmarked = data.bookmarks.some(b => b.case_number === currentCaseNumber);
+                updateBookmarkButton();
+            } catch (error) {
+                console.error('Error checking bookmark status:', error);
+            }
+        }
+
+        function updateBookmarkButton() {
+            const icon = document.getElementById('bookmarkIcon');
+            const text = document.getElementById('bookmarkText');
+            const btn = document.getElementById('bookmarkBtn');
+
+            if (isBookmarked) {
+                icon.className = 'fas fa-bookmark';
+                text.textContent = 'Bookmarked';
+                btn.classList.remove('btn-outline-primary');
+                btn.classList.add('btn-primary');
+            } else {
+                icon.className = 'far fa-bookmark';
+                text.textContent = 'Bookmark';
+                btn.classList.remove('btn-primary');
+                btn.classList.add('btn-outline-primary');
+            }
+        }
+
+        async function toggleBookmark() {
+            const userEmail = localStorage.getItem('userEmail');
+            
+            if (!userEmail) {
+                showNotification('Please login to bookmark cases', 'warning');
+                setTimeout(() => window.location.href = 'login.html', 1500);
+                return;
+            }
+
+            if (!currentCaseNumber) {
+                showNotification('Case number not available', 'error');
+                return;
+            }
+
+            try {
+                if (isBookmarked) {
+                    // Remove bookmark
+                    const response = await fetch(`http://127.0.0.1:5000/api/bookmarks/${encodeURIComponent(currentCaseNumber)}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'X-User-Email': userEmail
+                        }
+                    });
+
+                    if (response.ok) {
+                        isBookmarked = false;
+                        updateBookmarkButton();
+                        showNotification('Bookmark removed', 'success');
+                    } else {
+                        throw new Error('Failed to remove bookmark');
+                    }
+                } else {
+                    // Add bookmark
+                    const response = await fetch('http://127.0.0.1:5000/api/bookmarks', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-User-Email': userEmail
+                        },
+                        body: JSON.stringify({
+                            case_number: currentCaseNumber,
+                            notes: ''
+                        })
+                    });
+
+                    if (response.ok) {
+                        isBookmarked = true;
+                        updateBookmarkButton();
+                        showNotification('Case bookmarked successfully', 'success');
+                    } else {
+                        throw new Error('Failed to add bookmark');
+                    }
+                }
+            } catch (error) {
+                console.error('Bookmark error:', error);
+                showNotification('Error updating bookmark', 'error');
+            }
+        }
+
+        // Modified loadCaseDetails wrapper
+        async function loadCaseDetailsWithBookmark() {
+            await loadCaseDetails();
+            
+            const urlParams = new URLSearchParams(window.location.search);
+            currentCaseNumber = urlParams.get('case');
+            
+            if (currentCaseNumber) {
+                await checkBookmarkStatus();
+            }
+        }
+
+        // Export case to PDF
+        function exportPDF() {
+            window.print();
+        }
+
+        // --- LOAD KEY FACTS & ISSUES ---
+        async function loadKeyFacts(caseNumber) {
+            const placeholder = document.getElementById('key-facts-placeholder');
+            
+            try {
+                placeholder.innerHTML = '<div style="text-align:center; padding:2rem;"><i class="fas fa-spinner fa-spin" style="font-size:2rem; color:var(--accent-color);"></i><p style="margin-top:1rem; color:var(--text-secondary);">Extracting key facts with AI...</p></div>';
+                
+                const response = await fetch(`http://127.0.0.1:5000/api/extract-key-facts/${encodeURIComponent(caseNumber)}`);
+                
+                if (!response.ok) {
+                    throw new Error('Failed to extract key facts');
+                }
+                
+                const data = await response.json();
+                
+                // Build HTML for facts and issues
+                let html = '';
+                
+                // Key Facts Section
+                if (data.facts && data.facts.length > 0) {
+                    html += `
+                        <div style="margin-bottom: 2rem;">
+                            <h5 style="color: var(--accent-color); margin-bottom: 1rem; font-size: 1.1rem;">
+                                <i class="fas fa-file-alt me-2"></i>Key Facts
+                            </h5>
+                            <ul style="list-style: none; padding: 0;">
+                                ${data.facts.map(fact => `
+                                    <li style="padding: 0.75rem; margin-bottom: 0.5rem; background: rgba(99, 102, 241, 0.05); border-left: 3px solid var(--accent-color); border-radius: 8px;">
+                                        <i class="fas fa-check-circle" style="color: var(--success-color); margin-right: 0.5rem;"></i>
+                                        ${fact}
+                                    </li>
+                                `).join('')}
+                            </ul>
+                        </div>
+                    `;
+                }
+                
+                // Legal Issues Section
+                if (data.issues && data.issues.length > 0) {
+                    html += `
+                        <div style="margin-bottom: 2rem;">
+                            <h5 style="color: var(--warning-color); margin-bottom: 1rem; font-size: 1.1rem;">
+                                <i class="fas fa-gavel me-2"></i>Legal Issues
+                            </h5>
+                            <ul style="list-style: none; padding: 0;">
+                                ${data.issues.map(issue => `
+                                    <li style="padding: 0.75rem; margin-bottom: 0.5rem; background: rgba(245, 158, 11, 0.05); border-left: 3px solid var(--warning-color); border-radius: 8px;">
+                                        <i class="fas fa-question-circle" style="color: var(--warning-color); margin-right: 0.5rem;"></i>
+                                        ${issue}
+                                    </li>
+                                `).join('')}
+                            </ul>
+                        </div>
+                    `;
+                }
+                
+                // Legal Provisions Section
+                if (data.sections && data.sections.length > 0) {
+                    html += `
+                        <div>
+                            <h5 style="color: var(--info-color); margin-bottom: 1rem; font-size: 1.1rem;">
+                                <i class="fas fa-book-open me-2"></i>Legal Provisions
+                            </h5>
+                            <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+                                ${data.sections.map(section => `
+                                    <span style="padding: 0.5rem 1rem; background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 20px; color: var(--info-color); font-size: 0.85rem; font-weight: 500;">
+                                        <i class="fas fa-balance-scale me-1"></i>${section}
+                                    </span>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `;
+                }
+                
+                placeholder.innerHTML = html || '<p style="color:var(--text-secondary); text-align:center;">No key facts could be extracted.</p>';
+                
+            } catch (error) {
+                console.error('Error loading key facts:', error);
+                placeholder.innerHTML = `
+                    <div style="text-align:center; padding:2rem; color:var(--error-color);">
+                        <i class="fas fa-exclamation-triangle" style="font-size:2rem; margin-bottom:1rem;"></i>
+                        <p>Failed to extract key facts. Please try again later.</p>
+                    </div>
+                `;
+            }
+        }
+
+        // --- LOAD LEGAL CITATIONS & REFERENCES ---
+        async function loadCitations(caseNumber) {
+            const placeholder = document.getElementById('citations-placeholder');
+            
+            try {
+                placeholder.innerHTML = '<div style="text-align:center; padding:2rem;"><i class="fas fa-spinner fa-spin" style="font-size:2rem; color:var(--accent-color);"></i><p style="margin-top:1rem; color:var(--text-secondary);">Extracting legal citations...</p></div>';
+                
+                const response = await fetch(`http://127.0.0.1:5000/api/extract-citations/${encodeURIComponent(caseNumber)}`);
+                
+                if (!response.ok) {
+                    throw new Error('Failed to extract citations');
+                }
+                
+                const data = await response.json();
+                
+                let html = '';
+                
+                // IPC Sections
+                if (data.ipc_sections && data.ipc_sections.length > 0) {
+                    html += `
+                        <div style="margin-bottom: 2rem;">
+                            <h5 style="color: var(--error-color); margin-bottom: 1rem; font-size: 1.1rem;">
+                                <i class="fas fa-gavel me-2"></i>Indian Penal Code (IPC)
+                            </h5>
+                            <div style="display: flex; flex-wrap: wrap; gap: 0.75rem;">
+                                ${data.ipc_sections.map(section => `
+                                    <a href="https://indiankanoon.org/search/?formInput=${encodeURIComponent(section)}" 
+                                       target="_blank"
+                                       style="padding: 0.75rem 1.25rem; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 12px; color: var(--error-color); font-size: 0.9rem; font-weight: 500; text-decoration: none; transition: all 0.3s ease;">
+                                        <i class="fas fa-external-link-alt me-2" style="font-size: 0.75rem;"></i>${section}
+                                    </a>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `;
+                }
+                
+                // CrPC Sections
+                if (data.crpc_sections && data.crpc_sections.length > 0) {
+                    html += `
+                        <div style="margin-bottom: 2rem;">
+                            <h5 style="color: var(--info-color); margin-bottom: 1rem; font-size: 1.1rem;">
+                                <i class="fas fa-balance-scale me-2"></i>Criminal Procedure Code (CrPC)
+                            </h5>
+                            <div style="display: flex; flex-wrap: wrap; gap: 0.75rem;">
+                                ${data.crpc_sections.map(section => `
+                                    <a href="https://indiankanoon.org/search/?formInput=${encodeURIComponent(section)}" 
+                                       target="_blank"
+                                       style="padding: 0.75rem 1.25rem; background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 12px; color: var(--info-color); font-size: 0.9rem; font-weight: 500; text-decoration: none; transition: all 0.3s ease;">
+                                        <i class="fas fa-external-link-alt me-2" style="font-size: 0.75rem;"></i>${section}
+                                    </a>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `;
+                }
+                
+                // Evidence Act
+                if (data.evidence_sections && data.evidence_sections.length > 0) {
+                    html += `
+                        <div style="margin-bottom: 2rem;">
+                            <h5 style="color: var(--success-color); margin-bottom: 1rem; font-size: 1.1rem;">
+                                <i class="fas fa-file-alt me-2"></i>Indian Evidence Act
+                            </h5>
+                            <div style="display: flex; flex-wrap: wrap; gap: 0.75rem;">
+                                ${data.evidence_sections.map(section => `
+                                    <a href="https://indiankanoon.org/search/?formInput=${encodeURIComponent(section)}" 
+                                       target="_blank"
+                                       style="padding: 0.75rem 1.25rem; background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 12px; color: var(--success-color); font-size: 0.9rem; font-weight: 500; text-decoration: none; transition: all 0.3s ease;">
+                                        <i class="fas fa-external-link-alt me-2" style="font-size: 0.75rem;"></i>${section}
+                                    </a>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `;
+                }
+                
+                // Constitutional Articles
+                if (data.articles && data.articles.length > 0) {
+                    html += `
+                        <div style="margin-bottom: 2rem;">
+                            <h5 style="color: var(--warning-color); margin-bottom: 1rem; font-size: 1.1rem;">
+                                <i class="fas fa-landmark me-2"></i>Constitution of India
+                            </h5>
+                            <div style="display: flex; flex-wrap: wrap; gap: 0.75rem;">
+                                ${data.articles.map(article => `
+                                    <a href="https://indiankanoon.org/search/?formInput=${encodeURIComponent(article)}" 
+                                       target="_blank"
+                                       style="padding: 0.75rem 1.25rem; background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 12px; color: var(--warning-color); font-size: 0.9rem; font-weight: 500; text-decoration: none; transition: all 0.3s ease;">
+                                        <i class="fas fa-external-link-alt me-2" style="font-size: 0.75rem;"></i>${article}
+                                    </a>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `;
+                }
+                
+                // Case Citations
+                if (data.case_citations && data.case_citations.length > 0) {
+                    html += `
+                        <div style="margin-bottom: 2rem;">
+                            <h5 style="color: var(--accent-color); margin-bottom: 1rem; font-size: 1.1rem;">
+                                <i class="fas fa-quote-right me-2"></i>Referenced Cases
+                            </h5>
+                            <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                                ${data.case_citations.map(citation => `
+                                    <a href="https://indiankanoon.org/search/?formInput=${encodeURIComponent(citation)}" 
+                                       target="_blank"
+                                       style="padding: 1rem 1.25rem; background: rgba(99, 102, 241, 0.05); border: 1px solid rgba(99, 102, 241, 0.2); border-radius: 12px; color: var(--text-primary); text-decoration: none; transition: all 0.3s ease; display: flex; align-items: center; justify-content: space-between;">
+                                        <span style="font-size: 0.95rem;">${citation}</span>
+                                        <i class="fas fa-external-link-alt" style="color: var(--accent-color); font-size: 0.8rem;"></i>
+                                    </a>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `;
+                }
+                
+                // Other Acts
+                if (data.other_acts && data.other_acts.length > 0) {
+                    html += `
+                        <div>
+                            <h5 style="color: var(--text-secondary); margin-bottom: 1rem; font-size: 1.1rem;">
+                                <i class="fas fa-book me-2"></i>Other Acts & Statutes
+                            </h5>
+                            <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+                                ${data.other_acts.slice(0, 10).map(act => `
+                                    <span style="padding: 0.5rem 1rem; background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border-color); border-radius: 20px; color: var(--text-secondary); font-size: 0.85rem;">
+                                        ${act}
+                                    </span>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `;
+                }
+                
+                if (!html) {
+                    html = '<p style="color:var(--text-secondary); text-align:center;">No legal citations found in this case.</p>';
+                }
+                
+                placeholder.innerHTML = html;
+                
+                // Add hover effects
+                const links = placeholder.querySelectorAll('a');
+                links.forEach(link => {
+                    link.addEventListener('mouseenter', function() {
+                        this.style.transform = 'translateX(5px)';
+                        this.style.borderColor = 'var(--accent-color)';
+                    });
+                    link.addEventListener('mouseleave', function() {
+                        this.style.transform = 'translateX(0)';
+                        this.style.borderColor = '';
+                    });
+                });
+                
+            } catch (error) {
+                console.error('Error loading citations:', error);
+                placeholder.innerHTML = `
+                    <div style="text-align:center; padding:2rem; color:var(--error-color);">
+                        <i class="fas fa-exclamation-triangle" style="font-size:2rem; margin-bottom:1rem;"></i>
+                        <p>Failed to extract citations. Please try again later.</p>
+                    </div>
+                `;
+            }
+        }
+
+        // --- LOAD SIMILAR CASES (AI-POWERED PRECEDENT MATCHING) ---
+        async function loadSimilarCases(caseNumber) {
+            const container = document.getElementById('similar-cases-dynamic-list');
+            const networkConnections = document.getElementById('network-connections');
+            const networkCitations = document.getElementById('network-citations');
+            const networkClusters = document.getElementById('network-clusters');
+            
+            try {
+                container.innerHTML = '<div style="text-align:center; padding:2rem;"><i class="fas fa-spinner fa-spin" style="font-size:2rem; color:var(--accent-color);"></i><p style="margin-top:1rem; color:var(--text-secondary);">Finding similar cases with AI...</p></div>';
+                
+                const response = await fetch(`http://127.0.0.1:5000/api/similar-cases/${encodeURIComponent(caseNumber)}?limit=10`);
+                
+                if (!response.ok) {
+                    throw new Error('Failed to load similar cases');
+                }
+                
+                const data = await response.json();
+                
+                // Update network stats
+                if (networkConnections) networkConnections.textContent = data.total || 0;
+                if (networkCitations) networkCitations.textContent = data.similar_cases.filter(c => c.similarity > 70).length;
+                if (networkClusters) networkClusters.textContent = new Set(data.similar_cases.map(c => c.category)).size;
+                
+                if (!data.similar_cases || data.similar_cases.length === 0) {
+                    container.innerHTML = '<p style="color:var(--text-secondary); text-align:center;">No similar cases found.</p>';
+                    return;
+                }
+                
+                // Build HTML for similar cases
+                let html = '';
+                data.similar_cases.forEach((simCase, index) => {
+                    // Color based on similarity
+                    let scoreColor = 'var(--success-color)';
+                    if (simCase.similarity < 70) scoreColor = 'var(--warning-color)';
+                    if (simCase.similarity < 50) scoreColor = 'var(--error-color)';
+                    
+                    // Category badge color
+                    const categoryColors = {
+                        'murder': 'rgba(239, 68, 68, 0.2)',
+                        'theft': 'rgba(245, 158, 11, 0.2)',
+                        'fraud': 'rgba(139, 92, 246, 0.2)',
+                        'kidnapping': 'rgba(236, 72, 153, 0.2)',
+                        'default': 'rgba(99, 102, 241, 0.2)'
+                    };
+                    
+                    const categoryBg = categoryColors[simCase.category] || categoryColors['default'];
+                    
+                    html += `
+                        <a href="case-details.html?case=${encodeURIComponent(simCase.case_number)}" 
+                           class="similar-case-link"
+                           style="display: block; background: rgba(99, 102, 241, 0.05); border: 1px solid var(--border-color); border-radius: 12px; padding: 1.25rem; margin-bottom: 1rem; text-decoration: none; transition: all 0.3s ease; animation: slideUp 0.5s ease-out ${index * 0.1}s both;">
+                            <div style="display: flex; justify-content: between; align-items: start; margin-bottom: 0.75rem;">
+                                <div style="flex: 1;">
+                                    <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                                        <span style="padding: 0.25rem 0.75rem; background: ${categoryBg}; border-radius: 12px; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; color: var(--text-primary);">
+                                            ${simCase.category}
+                                        </span>
+                                        <span style="padding: 0.25rem 0.75rem; background: linear-gradient(135deg, ${scoreColor} 0%, ${scoreColor} 100%); border-radius: 12px; font-size: 0.75rem; font-weight: 600; color: white;">
+                                            ${simCase.similarity}% Match
+                                        </span>
+                                    </div>
+                                    <h6 style="color: var(--text-primary); margin: 0; font-size: 1rem; font-weight: 600;">
+                                        ${simCase.title || simCase.parties}
+                                    </h6>
+                                </div>
+                                <i class="fas fa-arrow-right" style="color: var(--accent-color); margin-left: 1rem; transition: transform 0.3s ease;"></i>
+                            </div>
+                            <p style="color: var(--text-secondary); font-size: 0.85rem; margin: 0; line-height: 1.6; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+                                ${simCase.description}
+                            </p>
+                            <div style="margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid var(--border-color); display: flex; align-items: center; gap: 0.5rem; color: var(--text-secondary); font-size: 0.8rem;">
+                                <i class="fas fa-file-alt"></i>
+                                <span>${simCase.case_number}</span>
+                            </div>
+                        </a>
+                    `;
+                });
+                
+                container.innerHTML = html;
+                
+                // Add hover effects for arrows
+                const links = container.querySelectorAll('.similar-case-link');
+                links.forEach(link => {
+                    const arrow = link.querySelector('.fa-arrow-right');
+                    link.addEventListener('mouseenter', () => {
+                        link.style.background = 'rgba(99, 102, 241, 0.15)';
+                        link.style.borderColor = 'var(--accent-color)';
+                        link.style.transform = 'translateX(5px)';
+                        if (arrow) arrow.style.transform = 'translateX(5px)';
+                    });
+                    link.addEventListener('mouseleave', () => {
+                        link.style.background = 'rgba(99, 102, 241, 0.05)';
+                        link.style.borderColor = 'var(--border-color)';
+                        link.style.transform = 'translateX(0)';
+                        if (arrow) arrow.style.transform = 'translateX(0)';
+                    });
+                });
+                
+            } catch (error) {
+                console.error('Error loading similar cases:', error);
+                container.innerHTML = `
+                    <div style="text-align:center; padding:2rem; color:var(--error-color);">
+                        <i class="fas fa-exclamation-triangle" style="font-size:2rem; margin-bottom:1rem;"></i>
+                        <p>Failed to load similar cases. Please try again later.</p>
+                    </div>
+                `;
+            }
+        }
+
         // --- Load data when the page finishes loading ---
-        window.addEventListener('DOMContentLoaded', loadCaseDetails);
+        window.addEventListener('DOMContentLoaded', loadCaseDetailsWithBookmark);
 
         // --- Add CSS Animations ---
         const style = document.createElement('style');
@@ -375,5 +914,6 @@
         document.head.appendChild(style);
 
     </script>
+    <script src="theme-script.js"></script>
 </body>
 </html>

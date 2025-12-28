@@ -118,22 +118,22 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const urlParams = new URLSearchParams(window.location.search);
-            const category = urlParams.get('category'); // e.g., 'criminal_law'
-            const categoryName = urlParams.get('name') || category.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase()); // Format name if not provided
+            const categories = urlParams.get('categories'); // e.g., 'assault,murder,rape'
+            const categoryName = urlParams.get('name') || 'Selected'; // Format name if not provided
 
             // Update titles
-            document.title = `${categoryName} Cases - LegalSearch Pro`;
-            document.getElementById('page-title').textContent = `${categoryName} Cases`;
-            document.getElementById('page-subtitle').textContent = `Showing cases related to ${categoryName}.`;
+            document.title = `${categoryName} - LegalSearch Pro`;
+            document.getElementById('page-title').textContent = `${categoryName}`;
+            document.getElementById('page-subtitle').textContent = `Showing cases in ${categoryName}.`;
 
-            if (category) {
-                fetchCases(category);
+            if (categories) {
+                fetchCases(categories);
             } else {
-                showError('Error: No category specified in the URL.');
+                showError('Error: No categories specified in the URL.');
             }
         });
 
-        async function fetchCases(category) {
+        async function fetchCases(categories) {
             const resultsContainer = document.getElementById('results-container');
             resultsContainer.innerHTML = `
                 <div class="loading-spinner-container">
@@ -143,7 +143,7 @@
 
             try {
                 // Ensure API server is running at http://127.0.0.1:5000
-                const apiUrl = `http://127.0.0.1:5000/browse?category=${encodeURIComponent(category)}`;
+                const apiUrl = `http://127.0.0.1:5000/browse?categories=${encodeURIComponent(categories)}`;
                 console.log("Fetching browse results from:", apiUrl);
                 const response = await fetch(apiUrl);
 
@@ -176,19 +176,25 @@
             let html = '';
             results.forEach((result, index) => {
                 const title = result.title || 'No Title Provided';
-                const text = result.judgment_text || 'No description preview available.';
-                const caseNumber = result.case_number; // Get the case number
+                const text = result.text || result.judgment_text || 'No description preview available.';
+                const caseNumber = result.case_number;
+                const category = result.category || 'Uncategorized';
+                
+                // Show first 300 characters of description
+                const preview = text.length > 300 ? text.substring(0, 300) + '...' : text;
 
-                // *** WRAP the card content in an <a> tag ***
                 html += `
                     <a href="case-details.html?case=${encodeURIComponent(caseNumber || '')}" class="result-card-link" title="View details for ${title}">
                          <h5 class="result-title">${title}</h5>
-                         <p class="result-text-preview">${text}</p>
-                         <small style='color: var(--accent-color); font-size: 0.75rem; display: block; margin-top: 0.5rem;'>Case No: ${caseNumber || 'N/A'}</small>
+                         <p class="result-text-preview">${preview}</p>
+                         <div class="d-flex justify-content-between align-items-center mt-2">
+                             <small style='color: var(--accent-color); font-size: 0.75rem;'>Case No: ${caseNumber || 'N/A'}</small>
+                             <span class="badge" style="background: var(--primary-gradient); color: white; padding: 0.25rem 0.75rem; border-radius: 10px; font-size: 0.7rem;">${category}</span>
+                         </div>
                     </a>
                 `;
             });
-            resultsContainer.innerHTML = html; // Replace loading spinner with results
+            resultsContainer.innerHTML = html;
         }
 
         function showError(message) {

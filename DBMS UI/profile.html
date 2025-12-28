@@ -193,12 +193,20 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item"><a class="nav-link" href="index.html">Search Cases</a></li>
-                    <li class="nav-item"><a class="nav-link" href="browse.html">Browse</a></li>
-                    <li class="nav-item"><a class="nav-link" href="recent-searches.html">Recent Searches</a></li>
-                    <li class="nav-item"><a class="nav-link" href="help.html">Help</a></li>
-                    <li class="nav-item"><a class="nav-link active" href="profile.html">My Account</a></li>
+                <ul class="navbar-nav ms-auto align-items-center">
+                    <li class="nav-item"><a class="nav-link" href="index.html"><i class="fas fa-search me-1"></i>Search</a></li>
+                    <li class="nav-item"><a class="nav-link" href="browse.html"><i class="fas fa-folder-open me-1"></i>Browse</a></li>
+                    <li class="nav-item"><a class="nav-link" href="bookmarks.html"><i class="fas fa-bookmark me-1"></i>Bookmarks</a></li>
+                    <li class="nav-item"><a class="nav-link" href="analytics-dashboard.html"><i class="fas fa-chart-bar me-1"></i>Analytics</a></li>
+                    <li class="nav-item"><a class="nav-link" href="recent-searches.html"><i class="fas fa-history me-1"></i>History</a></li>
+                    <li class="nav-item"><a class="nav-link" href="compare.html"><i class="fas fa-columns me-1"></i>Compare</a></li>
+                    <li class="nav-item"><a class="nav-link" href="help.html"><i class="fas fa-question-circle me-1"></i>Help</a></li>
+                    <li class="nav-item">
+                        <a id="themeToggle" class="nav-link" href="#" style="cursor: pointer;" title="Toggle Theme">
+                            <i class="fas fa-moon"></i>
+                        </a>
+                    </li>
+                    <li class="nav-item"><a class="nav-link active" href="profile.html"><i class="fas fa-user me-1"></i>Account</a></li>
                     <li id="auth-links"></li>
                 </ul>
             </div>
@@ -340,25 +348,192 @@
         </div>
     </main>
 
+    <!-- Change Password Modal -->
+    <div class="modal fade" id="changePasswordModal" tabindex="-1" aria-labelledby="changePasswordModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content" style="background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 20px;">
+                <div class="modal-header" style="border-bottom: 1px solid var(--border-color);">
+                    <h5 class="modal-title" id="changePasswordModalLabel" style="color: var(--text-primary); font-weight: 600;">
+                        <i class="fas fa-key me-2" style="color: var(--accent-color);"></i>
+                        Change Password
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="filter: invert(1);"></button>
+                </div>
+                <div class="modal-body" style="padding: 2rem;">
+                    <form id="changePasswordForm">
+                        <div class="mb-3">
+                            <label for="currentPassword" class="form-label" style="color: var(--text-secondary);">Current Password</label>
+                            <input type="password" class="form-control" id="currentPassword" required
+                                   style="background: rgba(255,255,255,0.05); border: 1px solid var(--border-color); color: var(--text-primary); padding: 0.875rem; border-radius: 10px;">
+                        </div>
+                        <div class="mb-3">
+                            <label for="newPassword" class="form-label" style="color: var(--text-secondary);">New Password</label>
+                            <input type="password" class="form-control" id="newPassword" required minlength="6"
+                                   style="background: rgba(255,255,255,0.05); border: 1px solid var(--border-color); color: var(--text-primary); padding: 0.875rem; border-radius: 10px;">
+                            <small style="color: var(--text-secondary); font-size: 0.85rem;">Must be at least 6 characters</small>
+                        </div>
+                        <div class="mb-4">
+                            <label for="confirmPassword" class="form-label" style="color: var(--text-secondary);">Confirm New Password</label>
+                            <input type="password" class="form-control" id="confirmPassword" required
+                                   style="background: rgba(255,255,255,0.05); border: 1px solid var(--border-color); color: var(--text-primary); padding: 0.875rem; border-radius: 10px;">
+                        </div>
+                        <button type="submit" class="btn btn-primary-custom w-100" id="changePasswordBtn">
+                            <i class="fas fa-check me-2"></i>Update Password
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     
     <script>
-        // Handle button clicks
-        document.querySelectorAll('button').forEach(button => {
-            button.addEventListener('click', function() {
-                // Show loading state
-                const originalText = this.innerHTML;
-                this.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Loading...';
-                this.disabled = true;
+        const API_BASE_URL = 'http://localhost:5000';
+        let userEmail = localStorage.getItem('userEmail');
+
+        // Load user profile data on page load
+        async function loadProfileData() {
+            if (!userEmail) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            // Set user name
+            const userName = localStorage.getItem('userName') || userEmail.split('@')[0];
+            document.getElementById('userName').textContent = userName;
+            
+            // Calculate member since (mock data, could be stored in user registration)
+            const memberSince = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+            document.getElementById('memberSince').innerHTML = `Member since: <span style="color: var(--accent-color);">${memberSince}</span>`;
+
+            // Load search statistics
+            try {
+                const searchResponse = await fetch(`${API_BASE_URL}/api/search-history`, {
+                    headers: {
+                        'X-User-Email': userEmail
+                    }
+                });
                 
-                setTimeout(() => {
-                    this.innerHTML = originalText;
-                    this.disabled = false;
+                if (searchResponse.ok) {
+                    const searches = await searchResponse.json();
+                    const totalSearches = searches.length;
                     
-                    // Show notification
-                    showNotification('Profile settings updated successfully!', 'success');
-                }, 1500);
+                    // Update profile stats
+                    document.getElementById('profileTotalSearches').textContent = totalSearches;
+                    document.getElementById('statTotalSearches').textContent = totalSearches;
+                    
+                    // Calculate days active (unique days with searches)
+                    if (searches.length > 0) {
+                        const uniqueDays = new Set(searches.map(s => new Date(s.searched_at).toDateString())).size;
+                        document.getElementById('profileDaysActive').textContent = uniqueDays;
+                    }
+                    
+                    // Calculate research time estimate (5 min per search average)
+                    const researchHours = Math.round((totalSearches * 5) / 60);
+                    document.getElementById('statResearchTime').textContent = researchHours + 'h';
+                    
+                    // Calculate success rate (searches with results)
+                    const successfulSearches = searches.filter(s => s.result_count > 0).length;
+                    const successRate = totalSearches > 0 ? Math.round((successfulSearches / totalSearches) * 100) : 0;
+                    document.getElementById('statSuccessRate').textContent = successRate + '%';
+                }
+            } catch (error) {
+                console.error('Error loading search stats:', error);
+            }
+
+            // Load bookmarks
+            try {
+                const bookmarksResponse = await fetch(`${API_BASE_URL}/bookmarks`, {
+                    headers: {
+                        'X-User-Email': userEmail
+                    }
+                });
+                
+                if (bookmarksResponse.ok) {
+                    const bookmarks = await bookmarksResponse.json();
+                    const bookmarkCount = bookmarks.length;
+                    
+                    document.getElementById('profileCasesSaved').textContent = bookmarkCount;
+                    document.getElementById('statBookmarks').textContent = bookmarkCount;
+                }
+            } catch (error) {
+                console.error('Error loading bookmarks:', error);
+            }
+        }
+
+        // Change Password Handler
+        document.getElementById('changePasswordForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const currentPassword = document.getElementById('currentPassword').value;
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            
+            // Validate passwords match
+            if (newPassword !== confirmPassword) {
+                showNotification('New passwords do not match!', 'error');
+                return;
+            }
+            
+            // Validate password length
+            if (newPassword.length < 6) {
+                showNotification('Password must be at least 6 characters!', 'error');
+                return;
+            }
+            
+            const changePasswordBtn = document.getElementById('changePasswordBtn');
+            changePasswordBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Updating...';
+            changePasswordBtn.disabled = true;
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/change-password`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-User-Email': userEmail
+                    },
+                    body: JSON.stringify({
+                        current_password: currentPassword,
+                        new_password: newPassword
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showNotification('Password changed successfully!', 'success');
+                    document.getElementById('changePasswordForm').reset();
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('changePasswordModal'));
+                    modal.hide();
+                } else {
+                    showNotification(data.error || 'Failed to change password', 'error');
+                }
+            } catch (error) {
+                console.error('Error changing password:', error);
+                showNotification('Failed to change password. Please try again.', 'error');
+            } finally {
+                changePasswordBtn.innerHTML = '<i class="fas fa-check me-2"></i>Update Password';
+                changePasswordBtn.disabled = false;
+            }
+        });
+
+        // Handle quick settings button clicks
+        document.querySelectorAll('.btn-outline-light').forEach((button, index) => {
+            button.addEventListener('click', function() {
+                const buttonText = this.querySelector('div > div:first-child').textContent;
+                
+                if (buttonText === 'Change Password') {
+                    const changePasswordModal = new bootstrap.Modal(document.getElementById('changePasswordModal'));
+                    changePasswordModal.show();
+                } else if (buttonText === 'Edit Profile') {
+                    showNotification('Profile editing coming soon!', 'info');
+                } else if (buttonText === 'Notifications') {
+                    showNotification('Notification settings coming soon!', 'info');
+                } else if (buttonText === 'Privacy') {
+                    showNotification('Privacy settings coming soon!', 'info');
+                }
             });
         });
 
@@ -716,20 +891,33 @@
                 const userEmail = localStorage.getItem('userEmail');
                 
                 if (!userEmail) {
-                    console.error('No user email found');
+                    console.error('No user email found in localStorage');
+                    document.getElementById('userName').textContent = 'Guest User';
+                    document.getElementById('memberSince').innerHTML = `Member since: <span style="color: var(--warning-color);">Not logged in</span>`;
+                    
+                    // Show message to login
+                    setTimeout(() => {
+                        if (confirm('You need to login to view your profile. Go to login page?')) {
+                            window.location.href = 'login.html';
+                        }
+                    }, 1000);
                     return;
                 }
                 
-                const response = await fetch(`http://localhost:5000/user-stats?email=${encodeURIComponent(userEmail)}`);
+                console.log('Fetching stats for:', userEmail);
+                const response = await fetch(`http://127.0.0.1:5000/user-stats?email=${encodeURIComponent(userEmail)}`);
                 
                 if (!response.ok) {
-                    throw new Error('Failed to fetch user stats');
+                    const errorText = await response.text();
+                    console.error('API Error:', response.status, errorText);
+                    throw new Error(`Failed to fetch user stats: ${response.status}`);
                 }
                 
                 const stats = await response.json();
+                console.log('Stats loaded:', stats);
                 
                 // Update user name and member since
-                document.getElementById('userName').textContent = stats.name || 'Legal Researcher';
+                document.getElementById('userName').textContent = stats.name || userEmail.split('@')[0] || 'Legal Researcher';
                 document.getElementById('memberSince').innerHTML = `Member since: <span style="color: var(--success-color);">${stats.member_since}</span>`;
                 
                 // Update the three stats in the profile card
@@ -745,6 +933,8 @@
                 
             } catch (error) {
                 console.error('Error loading user stats:', error);
+                document.getElementById('userName').textContent = 'Error Loading Profile';
+                document.getElementById('memberSince').innerHTML = `<span style="color: var(--error-color);">Failed to load data. Make sure API server is running.</span>`;
             }
         }
         
@@ -814,7 +1004,7 @@
             }
 
             try {
-                const response = await fetch('http://localhost:5000/update-profile', {
+                const response = await fetch('http://127.0.0.1:5000/update-profile', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -952,5 +1142,6 @@
             }
         });
     </script>
+    <script src="theme-script.js"></script>
 </body>
 </html>
