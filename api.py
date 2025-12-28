@@ -99,8 +99,8 @@ google = oauth.register(
 
 print("--- Loading AI model for semantic search ---")
 try:
-    model = SentenceTransformer('all-mpnet-base-v2')
-    print("✅ AI model loaded successfully (all-mpnet-base-v2, 768 dims).")
+    model = SentenceTransformer('all-MiniLM-L6-v2')
+    print("✅ AI model loaded successfully (all-MiniLM-L6-v2, 384 dims).")
 except Exception as e:
     print(f"❌ CRITICAL ERROR: Could not load SentenceTransformer model. Error: {e}")
     model = None
