@@ -691,10 +691,10 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 👤 Author
 
-**Your Name**
-- GitHub: [@your-username](https://github.com/your-username)
-- LinkedIn: [Your LinkedIn](https://linkedin.com/in/your-profile)
-- Email: your.email@example.com
+**Nandini Padavala**
+- GitHub: [nanddiniiiii](https://github.com/your-username)
+- LinkedIn: [https://www.linkedin.com/in/nandini-padavala-299893352/](https://linkedin.com/in/your-profile)
+- Email: bl.sc.u4cse24133@bl.students.amrita.edu
 
 ---
 
@@ -730,7 +730,7 @@ If you find this project useful, please consider giving it a star!
 
 <div align="center">
 
-**Made with ❤️ for Legal Tech Innovation**
+
 
 [⬆ Back to Top](#-legal-search-pro---ai-powered-case-database)
 
