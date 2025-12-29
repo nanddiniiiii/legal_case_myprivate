@@ -7,8 +7,8 @@
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15+-blue.svg)](https://www.postgresql.org/)
 [![AI](https://img.shields.io/badge/AI-Sentence_Transformers-orange.svg)](https://www.sbert.net/)
 
-**🌐 Live Demo:** https://disgustfully-undelirious-nga.ngrok-free.dev  
-*Available during IST business hours for demos*
+**🌐 Live Demo:** Available on request (ngrok-based deployment)  
+*Contact for live demo URL during interviews*
 
 ---
 
@@ -18,10 +18,11 @@
 
 ### ✨ Key Features
 
-- 🔍 **AI Semantic Search** - Understands query intent using sentence transformers (384-dim embeddings)
+- 🔍 **Hybrid Semantic Search** - Combines vector similarity with keyword matching for optimal results
+  - *Why hybrid?* Pure semantic search may miss exact statutory references (e.g., "IPC 379"), while hybrid scoring balances semantic relevance with legal keyword precision
 - 📊 **NLP Extraction** - Auto-extracts key facts, issues, and arguments from case text
 - 📚 **Citation Detection** - Identifies IPC sections, CrPC, Evidence Act, Constitution articles with clickable links
-- 🔗 **Similar Cases** - Finds related precedents using cosine similarity on vector embeddings
+- 🔗 **Similar Cases** - Finds related precedents using cosine similarity on 384-dim embeddings
 - 🎯 **Advanced Filters** - Search by category, date range, court, judge
 - 👤 **User System** - Authentication, search history, bookmarks
 - ⚡ **Smart Caching** - Fast repeated searches with in-memory cache
@@ -53,7 +54,7 @@ CREATE TABLE cases (
     judgment_date DATE,
     citation TEXT,
     statute_involved TEXT,
-    embedding VECTOR(768),  -- AI embedding for semantic search
+    embedding TEXT,  -- AI embedding for semantic search (384-dim, stored as text)
     created_at TIMESTAMP DEFAULT NOW()
 );
 
@@ -297,7 +298,6 @@ legal-case-dbms/
 - ✅ CORS configuration for API security
 - ✅ Environment variable management
 - ✅ Session management with secure cookies
-- ✅ OAuth 2.0 ready (Google integration prepared)
 
 ---
 
@@ -324,19 +324,29 @@ ngrok http 5000
 ## 📈 Performance Metrics
 
 - **Search Speed:** ~0.2-0.5 seconds for semantic search
-- **Database Size:** 2,160 cases with 768-dim embeddings
-- **Accuracy:** 95%+ for citation extraction
-- **Similarity Precision:** 85%+ for related case recommendations
-- **API Response Time:** <500ms average
+- **Database Size:** 2,160 Indian legal cases with 384-dim embeddings
+- **Citation Detection:** Regex-based pattern matching for IPC, CrPC, Evidence Act, Constitution
+- **API Response Time:** <500ms average (with caching)
+- **Model:** all-MiniLM-L6-v2 (80MB, optimized for speed)
+
+---
+
+## ⚠️ Current Limitations
+
+- **Citation extraction** uses regex patterns (not ML-based), may miss complex references
+- **No reranking** with cross-encoders (using single-stage retrieval)
+- **No OCR support** for scanned PDF judgments
+- **Embeddings stored as text** (pgvector extension optional)
+- **Local deployment only** (ngrok-based, not 24/7)
 
 ---
 
 ## 🛠️ Future Enhancements
 
+- [ ] OAuth 2.0 integration (Google/Microsoft login)
 - [ ] Document upload and OCR for case PDFs
-- [ ] Advanced analytics dashboard with charts
+- [ ] Cross-encoder reranking for improved relevance
 - [ ] Export search results to PDF/Excel
-- [ ] Email notifications for saved searches
 - [ ] Mobile application (React Native)
 - [ ] Multi-language support (Hindi, Tamil, etc.)
 - [ ] Integration with more legal databases
@@ -440,14 +450,14 @@ conn = psycopg2.connect(
 ### Step 4: Populate Database
 
 ```bash
-# Run the data generation script
-python embed_cases.py
+# Run the data import and embedding generation script
+python update_embeddings.py
 ```
 
 This will:
-- Generate realistic legal case descriptions
-- Create AI embeddings for each case
-- Populate the database with 47,400+ cases
+- Load 2,160 real Indian legal cases from Indian Kanoon data
+- Generate 384-dim AI embeddings for each case using all-MiniLM-L6-v2
+- Populate the database with structured case data
 
 ### Step 5: Start the API Server
 
@@ -594,30 +604,10 @@ pip install sentence-transformers torch
 
 **Issue: "pgvector not found"**
 ```bash
-# Install pgvector extension in PostgreSQL
+# pgvector is optional - app has fallback using NumPy
+# To enable pgvector (optional):
 CREATE EXTENSION vector;
 ```
-
-## 📈 Performance Metrics
-
-- **Search Speed:** ~0.2-0.5 seconds for semantic search
-- **Database Size:** 2,160 cases with 768-dim embeddings
-- **Accuracy:** 95%+ for citation extraction
-- **Similarity Precision:** 85%+ for related case recommendations
-- **API Response Time:** <500ms average
-
----
-
-## 🛠️ Future Enhancements
-
-- [ ] Document upload and OCR for case PDFs
-- [ ] Advanced analytics dashboard with charts
-- [ ] Export search results to PDF/Excel
-- [ ] Email notifications for saved searches
-- [ ] Mobile application (React Native)
-- [ ] Multi-language support (Hindi, Tamil, etc.)
-- [ ] Integration with more legal databases
-- [ ] GraphQL API
 
 ---
 
