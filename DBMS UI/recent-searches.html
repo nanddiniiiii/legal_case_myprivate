@@ -323,7 +323,7 @@
             }
 
             try {
-                const apiUrl = 'http://127.0.0.1:5000/api/search-history';
+                const apiUrl = '/api/search-history';
                 console.log('Fetching from:', apiUrl);
                 
                 const response = await fetch(apiUrl, {
@@ -388,7 +388,7 @@
                     <h3>Error Loading Searches</h3>
                     <p>${error.message}</p>
                     <p style="font-size: 0.9rem; color: #718096; margin-top: 0.5rem;">
-                        Make sure the API server is running at http://127.0.0.1:5000
+                        Make sure the API server is running at 
                     </p>
                     <a href="index.html" class="btn-action" style="margin-top: 1rem; display: inline-block;">
                         <i class="fas fa-search me-2"></i>Start Searching
@@ -482,7 +482,7 @@
 
             if (confirm('Are you sure you want to clear all search history? This action cannot be undone.')) {
                 try {
-                    const response = await fetch('http://127.0.0.1:5000/clear-search-history', {
+                    const response = await fetch('/clear-search-history', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'

@@ -274,8 +274,8 @@
 
             try {
                 console.log(`Fetching details for case: ${caseNumber}`);
-                // Ensure API server is running at http://127.0.0.1:5000
-                const response = await fetch(`http://127.0.0.1:5000/case/${encodeURIComponent(caseNumber)}`);
+                // Ensure API server is running at 
+                const response = await fetch(`/case/${encodeURIComponent(caseNumber)}`);
 
                 if (!response.ok) {
                     const errorData = await response.json().catch(() => ({ error: `Case not found or API error (${response.status})` }));
@@ -439,7 +439,7 @@
             if (!userEmail || !currentCaseNumber) return;
 
             try {
-                const response = await fetch(`http://127.0.0.1:5000/api/bookmarks?user_email=${encodeURIComponent(userEmail)}`);
+                const response = await fetch(`/api/bookmarks?user_email=${encodeURIComponent(userEmail)}`);
                 const data = await response.json();
                 
                 isBookmarked = data.bookmarks.some(b => b.case_number === currentCaseNumber);
@@ -484,7 +484,7 @@
             try {
                 if (isBookmarked) {
                     // Remove bookmark
-                    const response = await fetch(`http://127.0.0.1:5000/api/bookmarks/${encodeURIComponent(currentCaseNumber)}`, {
+                    const response = await fetch(`/api/bookmarks/${encodeURIComponent(currentCaseNumber)}`, {
                         method: 'DELETE',
                         headers: {
                             'X-User-Email': userEmail
@@ -500,7 +500,7 @@
                     }
                 } else {
                     // Add bookmark
-                    const response = await fetch('http://127.0.0.1:5000/api/bookmarks', {
+                    const response = await fetch('/api/bookmarks', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -550,7 +550,7 @@
             try {
                 placeholder.innerHTML = '<div style="text-align:center; padding:2rem;"><i class="fas fa-spinner fa-spin" style="font-size:2rem; color:var(--accent-color);"></i><p style="margin-top:1rem; color:var(--text-secondary);">Extracting key facts with AI...</p></div>';
                 
-                const response = await fetch(`http://127.0.0.1:5000/api/extract-key-facts/${encodeURIComponent(caseNumber)}`);
+                const response = await fetch(`/api/extract-key-facts/${encodeURIComponent(caseNumber)}`);
                 
                 if (!response.ok) {
                     throw new Error('Failed to extract key facts');
@@ -637,7 +637,7 @@
             try {
                 placeholder.innerHTML = '<div style="text-align:center; padding:2rem;"><i class="fas fa-spinner fa-spin" style="font-size:2rem; color:var(--accent-color);"></i><p style="margin-top:1rem; color:var(--text-secondary);">Extracting legal citations...</p></div>';
                 
-                const response = await fetch(`http://127.0.0.1:5000/api/extract-citations/${encodeURIComponent(caseNumber)}`);
+                const response = await fetch(`/api/extract-citations/${encodeURIComponent(caseNumber)}`);
                 
                 if (!response.ok) {
                     throw new Error('Failed to extract citations');
@@ -806,7 +806,7 @@
             try {
                 container.innerHTML = '<div style="text-align:center; padding:2rem;"><i class="fas fa-spinner fa-spin" style="font-size:2rem; color:var(--accent-color);"></i><p style="margin-top:1rem; color:var(--text-secondary);">Finding similar cases with AI...</p></div>';
                 
-                const response = await fetch(`http://127.0.0.1:5000/api/similar-cases/${encodeURIComponent(caseNumber)}?limit=10`);
+                const response = await fetch(`/api/similar-cases/${encodeURIComponent(caseNumber)}?limit=10`);
                 
                 if (!response.ok) {
                     throw new Error('Failed to load similar cases');

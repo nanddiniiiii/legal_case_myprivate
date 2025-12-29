@@ -905,7 +905,7 @@
                 }
                 
                 console.log('Fetching stats for:', userEmail);
-                const response = await fetch(`http://127.0.0.1:5000/user-stats?email=${encodeURIComponent(userEmail)}`);
+                const response = await fetch(`/user-stats?email=${encodeURIComponent(userEmail)}`);
                 
                 if (!response.ok) {
                     const errorText = await response.text();
@@ -1004,7 +1004,7 @@
             }
 
             try {
-                const response = await fetch('http://127.0.0.1:5000/update-profile', {
+                const response = await fetch('/update-profile', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

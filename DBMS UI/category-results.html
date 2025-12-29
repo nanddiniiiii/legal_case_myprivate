@@ -142,8 +142,8 @@
                 </div>`; // Show loading state again
 
             try {
-                // Ensure API server is running at http://127.0.0.1:5000
-                const apiUrl = `http://127.0.0.1:5000/browse?categories=${encodeURIComponent(categories)}`;
+                // Ensure API server is running at 
+                const apiUrl = `/browse?categories=${encodeURIComponent(categories)}`;
                 console.log("Fetching browse results from:", apiUrl);
                 const response = await fetch(apiUrl);
 

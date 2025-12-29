@@ -408,7 +408,7 @@
         // Load statistics on page load
         async function loadStats() {
             try {
-                const response = await fetch('http://127.0.0.1:5000/api/stats');
+                const response = await fetch('/api/stats');
                 const stats = await response.json();
                 document.getElementById('stat-total').textContent = stats.total_cases.toLocaleString();
                 document.getElementById('stat-categories').textContent = stats.total_categories;
@@ -458,7 +458,7 @@
 
             // 2. Call the backend API
             try {
-                let apiUrl = `http://127.0.0.1:5000/search?query=${encodeURIComponent(query)}`;
+                let apiUrl = `/search?query=${encodeURIComponent(query)}`;
                 
                 console.log(`Contacting API at: ${apiUrl}`);
 
