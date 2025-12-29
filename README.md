@@ -656,8 +656,6 @@ GitHub: [@nanddiniiiii](https://github.com/nanddiniiiii) | LinkedIn: [Nandini Pa
 
 <div align="center">
 
-**⭐ Star this repo if you find it useful!**
-
 [⬆ Back to Top](#-legal-search-pro---ai-powered-case-database)
 
 </div>
