@@ -403,19 +403,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-## ⭐ Star History
-
-If you find this project useful, please consider giving it a star!
-
-[![Star History Chart](https://api.star-history.com/svg?repos=YOUR_USERNAME/legal-case-dbms&type=Date)](https://star-history.com/#YOUR_USERNAME/legal-case-dbms&Date)
-
----
-
-<div align="center">
-
-**Made with ❤️ for Legal Tech Innovation**
-
-[⬆ Back to Top](#-legal-search-pro---ai-powered-case-database)
 
 </div>
 ````
