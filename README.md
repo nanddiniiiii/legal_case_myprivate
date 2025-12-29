@@ -239,7 +239,7 @@ GET /api/similar-cases/2018-001?limit=5
 legal-case-dbms/
 ├── api.py                      # Main Flask application (1950+ lines)
 ├── requirements.txt            # Python dependencies
-├── Procfile                    # Railway deployment config
+├── Procfile                    # Production server config
 ├── runtime.txt                 # Python version
 ├── DEPLOYMENT.md              # Deployment guide
 ├── TECHNICAL_DOCS.md          # Technical documentation
@@ -303,16 +303,21 @@ legal-case-dbms/
 
 ## 🚀 Deployment
 
-See [DEPLOYMENT.md](DEPLOYMENT.md) for detailed cloud deployment instructions.
+**Current Setup: ngrok Tunnel (Local)**
 
-**Quick Deploy to Railway:**
-1. Push to GitHub
-2. Connect Railway to your repo
-3. Add PostgreSQL database
-4. Set environment variables
-5. Deploy! 🎉
+1. Start Flask backend:
+```bash
+python api.py
+```
 
-**Live URL:** Your app will be available at `https://your-app.railway.app`
+2. Start ngrok tunnel:
+```bash
+ngrok http 5000
+```
+
+3. Share the ngrok HTTPS URL!
+
+**Note:** Link is active only when your laptop is running. Perfect for demos, interviews, and resume links. For 24/7 deployment, consider AWS EC2, Railway, or Render.
 
 ---
 
@@ -557,29 +562,13 @@ dbms_proj/
 └── README.md
 ```
 
-## 🌐 Deployment
+## 💡 Future Deployment Options
 
-### Option 1: Render.com + Neon.tech (Free)
-
-**Backend (Render.com):**
-1. Create `requirements.txt`
-2. Deploy Flask app
-3. Add environment variables
-
-**Database (Neon.tech):**
-1. Create PostgreSQL instance
-2. Enable pgvector extension
-3. Import data
-
-**Frontend (GitHub Pages):**
-1. Push to GitHub
-2. Enable GitHub Pages
-3. Update API URL
-
-### Option 2: AWS/Cloud
-- EC2/Elastic Beanstalk for API
-- RDS PostgreSQL with pgvector
-- S3 + CloudFront for frontend
+For 24/7 availability:
+- **AWS EC2** (t2.micro free tier, 1GB RAM)
+- **Railway** (requires image optimization)
+- **Render** (paid tier for AI models)
+- **ngrok Pro** ($8/month for permanent URL)
 
 ## 🎓 Learning Outcomes
 
