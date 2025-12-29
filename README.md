@@ -1,78 +1,39 @@
 # 🏛️ Legal Search Pro - AI-Powered Case Database
 
-> **Production-Ready Legal Case Management System with AI-Powered Semantic Search, NLP Extraction, and Vector Similarity**
+> **Full-Stack Legal Case Management System with AI-Powered Semantic Search**
 
 [![Python](https://img.shields.io/badge/Python-3.11-blue.svg)](https://www.python.org/)
 [![Flask](https://img.shields.io/badge/Flask-3.0-green.svg)](https://flask.palletsprojects.com/)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15+-blue.svg)](https://www.postgresql.org/)
 [![AI](https://img.shields.io/badge/AI-Sentence_Transformers-orange.svg)](https://www.sbert.net/)
-[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-**🌐 Live Demo:** https://disgustfully-undelirious-nga.ngrok-free.dev
+**🌐 Live Demo:** https://disgustfully-undelirious-nga.ngrok-free.dev  
+*Available during IST business hours for demos*
 
 ---
 
 ## 📋 Overview
 
-**Legal Search Pro** is a full-stack legal case database management system that leverages cutting-edge AI and NLP technologies to revolutionize legal research. With over **2,160 real Indian legal cases**, semantic search capabilities, and intelligent citation extraction, this system provides lawyers, researchers, and law students with powerful tools for case discovery and analysis.
+**Legal Search Pro** is a full-stack AI-powered legal case database with **2,160 real Indian legal cases** from Indian Kanoon. Features semantic search, NLP-based key facts extraction, citation detection, and vector similarity for finding related precedents.
 
-### 🎯 Key Features
+### ✨ Key Features
 
-#### 🤖 **AI-Powered Semantic Search**
-- Uses `all-MiniLM-L6-v2` model (384-dimensional embeddings)
-- Understands query intent beyond keyword matching
-- Hybrid search combining semantic similarity + keyword relevance
-- Advanced filters (category, date range, court, judge)
-- Real-time search with intelligent caching
-
-#### 🔬 **NLP-Based Legal Intelligence**
-- **Key Facts Extraction** - Automatically identifies facts, issues, and arguments from case text
-- **Citation Extraction** - Detects IPC sections, CrPC provisions, Evidence Act, Constitutional Articles
-- **Clickable References** - All citations link to Indian Kanoon for instant lookup
-- **Legal Provision Analysis** - Pattern-based extraction with 95%+ accuracy
-
-#### 🧠 **AI Vector Similarity Engine**
-- **Related Precedents** - Finds similar cases using cosine similarity on embeddings
-- **Similarity Scoring** - Shows percentage match (0-100%) with color-coded indicators
-- **Network Analysis** - Displays connections, citations, and legal clusters
-- **Smart Recommendations** - Suggests 5-10 most relevant precedents per case
-
-#### 💼 **Production Features**
-- User authentication with bcrypt password hashing
-- Search history and bookmarking system
-- Admin dashboard with analytics
-- RESTful API architecture
-- Responsive dark-mode UI
-- OAuth 2.0 integration ready (Google)
+- 🔍 **AI Semantic Search** - Understands query intent using sentence transformers (384-dim embeddings)
+- 📊 **NLP Extraction** - Auto-extracts key facts, issues, and arguments from case text
+- 📚 **Citation Detection** - Identifies IPC sections, CrPC, Evidence Act, Constitution articles with clickable links
+- 🔗 **Similar Cases** - Finds related precedents using cosine similarity on vector embeddings
+- 🎯 **Advanced Filters** - Search by category, date range, court, judge
+- 👤 **User System** - Authentication, search history, bookmarks
+- ⚡ **Smart Caching** - Fast repeated searches with in-memory cache
 
 ---
 
 ## 🏗️ Tech Stack
 
-### **Backend**
-- **Python 3.11** - Core application logic
-- **Flask 3.0** - RESTful API framework
-- **PostgreSQL 15** - Primary database with 2,160 cases
-- **Sentence Transformers** - AI model for semantic embeddings
-- **NumPy** - Vector similarity calculations
-- **bcrypt** - Secure password hashing
-
-### **Frontend**
-- **HTML5/CSS3/JavaScript** - Modern responsive UI
-- **Bootstrap 5** - Component framework
-- **Font Awesome 6** - Icon library
-- **Inter & JetBrains Mono** - Professional typography
-
-### **AI/ML**
-- **Model:** `sentence-transformers/all-mpnet-base-v2`
-- **Embedding Dimensions:** 768
-- **Similarity Metric:** Cosine Similarity
-- **NLP:** Regex-based pattern matching for legal provisions
-
-### **DevOps**
-- **Gunicorn** - Production WSGI server
-- **Railway/Render** - Cloud deployment platform
-- **Git** - Version control
+**Backend:** Python 3.11, Flask 3.0, PostgreSQL 15  
+**AI/ML:** Sentence Transformers (all-MiniLM-L6-v2), NumPy  
+**Frontend:** HTML5/CSS3/JavaScript, Bootstrap 5  
+**Deployment:** ngrok tunnel (local), optimized for cloud deployment
 
 ---
 
@@ -691,46 +652,22 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 👤 Author
 
-**Nandini Padavala**
-- GitHub: [nanddiniiiii](https://github.com/your-username)
-- LinkedIn: [https://www.linkedin.com/in/nandini-padavala-299893352/](https://linkedin.com/in/your-profile)
-- Email: bl.sc.u4cse24133@bl.students.amrita.edu
+**Nandini Padavala**  
+GitHub: [@nanddiniiiii](https://github.com/nanddiniiiii) | LinkedIn: [Nandini Padavala](https://www.linkedin.com/in/nandini-padavala-299893352/)
 
 ---
 
 ## 🙏 Acknowledgments
 
-- **Sentence Transformers** - For powerful semantic embeddings
-- **Indian Kanoon** - Legal case data source
-- **PostgreSQL** - Robust database system
-- **Flask** - Lightweight web framework
-
----
-
-## 📸 Screenshots
-
-### Main Search Interface
-*Coming Soon - Add screenshot here*
-
-### Case Details with AI Features
-*Coming Soon - Add screenshot here*
-
-### Admin Dashboard
-*Coming Soon - Add screenshot here*
-
----
-
-## ⭐ Star History
-
-If you find this project useful, please consider giving it a star!
-
-[![Star History Chart](https://api.star-history.com/svg?repos=YOUR_USERNAME/legal-case-dbms&type=Date)](https://star-history.com/#YOUR_USERNAME/legal-case-dbms&Date)
+- **Sentence Transformers** - Semantic embeddings
+- **Indian Kanoon** - Legal case data
+- **PostgreSQL & Flask** - Core infrastructure
 
 ---
 
 <div align="center">
 
-
+**⭐ Star this repo if you find it useful!**
 
 [⬆ Back to Top](#-legal-search-pro---ai-powered-case-database)
 

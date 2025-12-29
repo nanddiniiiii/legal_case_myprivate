@@ -14,7 +14,7 @@ import traceback
 # --- CONFIGURATION ---
 # ==============================================================================
 # The path to your CSV file
-FILEPATH_KAGGLE = r"D:\OneDrive - Amrita vishwa vidyapeetham\Desktop\dbms_proj\archive (2)\judgments.csv"
+FILEPATH_KAGGLE = r"archive (2)\judgments.csv"
 
 # Define a list of keywords for various legal categories
 # These are used to enrich the data so the browse categories will work
@@ -152,7 +152,13 @@ def embed_and_populate(csv_file_path, conn):
     """
     print("--- Starting data embedding and population process ---")
     try:
-        register_vector(conn)
+        # Try to register pgvector, but continue without it if not available
+        try:
+            register_vector(conn)
+            print("--- pgvector extension registered ---")
+        except Exception as e:
+            print(f"--- pgvector not available (OK - will store as text): {e} ---")
+        
         cur = conn.cursor()
         print("--- Database cursor created. Clearing existing data... ---")
         
