@@ -571,7 +571,7 @@ def get_user_stats():
         total_searches = cur.fetchone()[0]
         bookmarks_count = 0
         if bookmarks_table_exists: cur.execute("SELECT COUNT(*) FROM user_bookmarks WHERE user_email = %s;", (user_email,)); bookmarks_count = cur.fetchone()[0]
-        cur.execute("SELECT COUNT(*) FROM user_searches WHERE user_email = %s AND results_count > 0;", (user_email,))
+        cur.execute("SELECT COUNT(*) FROM user_searches WHERE user_email = %s AND result_count > 0;", (user_email,))
         successful_searches = cur.fetchone()[0]
         success_rate = round((successful_searches / total_searches) * 100) if total_searches > 0 else 0
         research_hours = (total_searches * 1) // 60
