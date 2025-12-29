@@ -8,7 +8,7 @@
 [![AI](https://img.shields.io/badge/AI-Sentence_Transformers-orange.svg)](https://www.sbert.net/)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-**🔗 Live Demo:** `https://your-app.railway.app` *(Coming Soon)*
+**🌐 Live Demo:** https://disgustfully-undelirious-nga.ngrok-free.dev
 
 ---
 
@@ -19,7 +19,7 @@
 ### 🎯 Key Features
 
 #### 🤖 **AI-Powered Semantic Search**
-- Uses `all-mpnet-base-v2` model (768-dimensional embeddings)
+- Uses `all-MiniLM-L6-v2` model (384-dimensional embeddings)
 - Understands query intent beyond keyword matching
 - Hybrid search combining semantic similarity + keyword relevance
 - Advanced filters (category, date range, court, judge)

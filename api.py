@@ -81,7 +81,7 @@ def cached(cache, key_func=None):
 # ==============================================================================
 # --- CONFIGURATION & AI MODEL LOADING ---
 # ==============================================================================
-app = Flask(__name__)
+app = Flask(__name__, static_folder='DBMS UI', static_url_path='')
 app.secret_key = os.getenv('SECRET_KEY', 'dev-secret-key-change-in-production')
 CORS(app, supports_credentials=True, origins='*', resources={r"/*": {"origins": "*"}})
 
@@ -123,6 +123,23 @@ def get_db_connection():
     except psycopg2.OperationalError as e:
         print(f"❌ DATABASE CONNECTION ERROR: {e}")
         raise e
+
+# ==============================================================================
+# --- FRONTEND ROUTES ---
+# ==============================================================================
+@app.route('/')
+def index():
+    """Serve the main index page."""
+    return app.send_static_file('index.html')
+
+@app.route('/<path:path>')
+def serve_static(path):
+    """Serve static files from DBMS UI folder."""
+    try:
+        return app.send_static_file(path)
+    except:
+        # If file not found, serve index.html (for client-side routing)
+        return app.send_static_file('index.html')
 
 # ==============================================================================
 # --- ENHANCED SEARCH ENDPOINT (WITH DIVERSIFICATION & LARGER POOL) ---
