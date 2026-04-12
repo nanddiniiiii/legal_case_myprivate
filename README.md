@@ -1,4 +1,4 @@
-# 🏛️ Legal Search Pro - AI-Powered Case Database
+# Legal Search Pro - AI-Powered Case Database
 
 > **Full-Stack Legal Case Management System with AI-Powered Semantic Search**
 
@@ -7,29 +7,29 @@
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15+-blue.svg)](https://www.postgresql.org/)
 [![AI](https://img.shields.io/badge/AI-Sentence_Transformers-orange.svg)](https://www.sbert.net/)
 
-**🌐 Live Demo:** Available on request (ngrok-based deployment)  
+**Live Demo:** Available on request (ngrok-based deployment)  
 *Contact for live demo URL during interviews*
 
 ---
 
-## 📋 Overview
+## Overview
 
 **Legal Search Pro** is a full-stack AI-powered legal case database with **2,160 real Indian legal cases** from Indian Kanoon. Features semantic search, NLP-based key facts extraction, citation detection, and vector similarity for finding related precedents.
 
-### ✨ Key Features
+### Key Features
 
-- 🔍 **Hybrid Semantic Search** - Combines vector similarity with keyword matching for optimal results
-  - *Why hybrid?* Pure semantic search may miss exact statutory references (e.g., "IPC 379"), while hybrid scoring balances semantic relevance with legal keyword precision
-- 📊 **NLP Extraction** - Auto-extracts key facts, issues, and arguments from case text
-- 📚 **Citation Detection** - Identifies IPC sections, CrPC, Evidence Act, Constitution articles with clickable links
-- 🔗 **Similar Cases** - Finds related precedents using cosine similarity on 384-dim embeddings
-- 🎯 **Advanced Filters** - Search by category, date range, court, judge
-- 👤 **User System** - Authentication, search history, bookmarks
-- ⚡ **Smart Caching** - Fast repeated searches with in-memory cache
+-  **Hybrid Semantic Search** - Combines vector similarity with keyword matching for optimal results
+- *Why hybrid?* Pure semantic search may miss exact statutory references (e.g., "IPC 379"), while hybrid scoring balances semantic relevance with legal keyword precision
+-  **NLP Extraction** - Auto-extracts key facts, issues, and arguments from case text
+-  **Citation Detection** - Identifies IPC sections, CrPC, Evidence Act, Constitution articles with clickable links
+-  **Similar Cases** - Finds related precedents using cosine similarity on 384-dim embeddings
+-  **Advanced Filters** - Search by category, date range, court, judge
+- **User System** - Authentication, search history, bookmarks
+-  **Smart Caching** - Fast repeated searches with in-memory cache
 
 ---
 
-## 🏗️ Tech Stack
+## Tech Stack
 
 **Backend:** Python 3.11, Flask 3.0, PostgreSQL 15  
 **AI/ML:** Sentence Transformers (all-MiniLM-L6-v2), NumPy  
@@ -38,7 +38,7 @@
 
 ---
 
-## 🗄️ Database Schema
+## Database Schema
 
 ```sql
 -- Main cases table with vector embeddings
@@ -365,22 +365,6 @@ Contributions are welcome! Please follow these steps:
 5. Open a Pull Request
 
 ---
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
----
-
-## 👤 Author
-
-**Your Name**
-- GitHub: [@your-username](https://github.com/your-username)
-- LinkedIn: [Your LinkedIn](https://linkedin.com/in/your-profile)
-- Email: your.email@example.com
-
----
-
 ## 🙏 Acknowledgments
 
 - **Sentence Transformers** - For powerful semantic embeddings
@@ -393,13 +377,13 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 📸 Screenshots
 
 ### Main Search Interface
-*Coming Soon - Add screenshot here*
+*Coming Soon *
 
 ### Case Details with AI Features
-*Coming Soon - Add screenshot here*
+*Coming Soon*
 
 ### Admin Dashboard
-*Coming Soon - Add screenshot here*
+*Coming Soon *
 
 ---
 
@@ -488,7 +472,7 @@ curl "http://localhost:5000/search?query=theft"
 GET /case/<case_number>
 ```
 
-## 🎨 Features
+## Features
 
 ### 1. Semantic Search
 - Understands meaning, not just keywords
@@ -514,7 +498,7 @@ GET /case/<case_number>
 - Case details view
 - Responsive design
 
-## 📊 How It Works
+## How It Works
 
 1. **User Query**: User enters search like "vehicle theft at night"
 2. **AI Embedding**: Query converted to 384-dimensional vector
@@ -524,7 +508,7 @@ GET /case/<case_number>
 4. **Scoring**: Combined score from both methods
 5. **Results**: Top 20 most relevant cases returned
 
-## 🔧 Technical Details
+## Technical Details
 
 ### Vector Embeddings
 - Model: `all-MiniLM-L6-v2`
@@ -544,7 +528,7 @@ GET /case/<case_number>
 - Handles concurrent requests
 - Efficient vector indexing
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 dbms_proj/
@@ -559,7 +543,7 @@ dbms_proj/
 └── README.md
 ```
 
-## 💡 Future Deployment Options
+## Future Deployment Options
 
 For 24/7 availability:
 - **AWS EC2** (t2.micro free tier, 1GB RAM)
@@ -567,7 +551,7 @@ For 24/7 availability:
 - **Render** (paid tier for AI models)
 - **ngrok Pro** ($8/month for permanent URL)
 
-## 🎓 Learning Outcomes
+## Learning Outcomes
 
 This project demonstrates:
 - Full-stack development (Python, PostgreSQL, HTML/CSS/JS)
@@ -577,7 +561,7 @@ This project demonstrates:
 - Semantic search algorithms
 - Data engineering (ETL pipeline)
 
-## 🐛 Troubleshooting
+## Troubleshooting
 
 **Issue: "AI model not loaded"**
 ```bash
@@ -598,7 +582,7 @@ CREATE EXTENSION vector;
 
 ---
 
-## 🤝 Contributing
+## Contributing
 
 Contributions are welcome! Please follow these steps:
 
@@ -609,13 +593,6 @@ Contributions are welcome! Please follow these steps:
 5. Open a Pull Request
 
 ---
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
----
-
 ## 👤 Author
 
 **Nandini Padavala**  
