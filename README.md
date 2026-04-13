@@ -8,7 +8,6 @@
 [![AI](https://img.shields.io/badge/AI-Sentence_Transformers-orange.svg)](https://www.sbert.net/)
 
 Live Demo: Available on request (ngrok-based deployment)
-Contact for live demo URL during interviews
 
 ---
 
