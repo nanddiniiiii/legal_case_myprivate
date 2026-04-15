@@ -257,7 +257,6 @@ python api.py
 
 ---
 
-## 🎓 For Recruiters
 
 **What to test:**
 1. Search "theft" → get relevant cases ranked by similarity
