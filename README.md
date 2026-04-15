@@ -265,8 +265,6 @@ python api.py
 4. Analytics page → shows database statistics
 5. Share ngrok URL → others can access live demo
 
-**Time to live demo:** 5 minutes (with data already scraped)
-
 ---
 
 ## 📝 License
