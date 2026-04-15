@@ -41,11 +41,12 @@ SEARCH_QUERIES = [
     'theft', 'murder', 'property dispute', 'divorce', 'contract breach',
     'motor accident', 'cheating', 'assault', 'rape', 'dowry',
     'land dispute', 'employment', 'tax evasion', 'corruption',
-    'fraud', 'domestic violence', 'kidnapping', 'robbery'
+    'fraud', 'domestic violence', 'kidnapping', 'robbery', 'banking', 
+    'intellectual property', 'cyber crime', 'environmental'
 ]
 
 # How many cases to scrape per category
-CASES_PER_QUERY = 200  # Total will be 200 x 18 = 3,600 cases
+CASES_PER_QUERY = 500  # Total will be 200 x 18 = 3,600 cases
 
 # Delay between requests (be nice to the server!)
 DELAY_BETWEEN_REQUESTS = 2  # seconds
@@ -123,13 +124,30 @@ def scrape_case_details(case_url, query_name="unknown"):
             if h1_tag:
                 title = h1_tag.text.strip()
         
-        # SKIP statute/section pages (not actual cases)
-        skip_patterns = [
-            'Section', 'Article', 'Rule', 'Regulation', 
-            'Indian Penal Code', 'IPC', 'CrPC', 'CPC',
-            'Constitution of India', 'Bare Act'
-        ]
-        if any(pattern in title for pattern in skip_patterns):
+        # SKIP statute/section pages (ONLY if it's clearly a statute definition, not a judgment)
+        # Real statute pages have patterns like:
+        # - "Section 379 in The Indian Penal Code, 1860"
+        # - "The Indian Penal Code, 1860"
+        # But real judgments also mention sections, so be more specific
+        
+        is_statute_page = False
+        
+        # Check if it's a pure statute definition page (no case parties)
+        if not (' vs ' in title.lower() or ' v. ' in title.lower()):
+            # No "vs", so might be statute. Check for statute-specific patterns
+            statute_patterns = [
+                r'^section \d+ in',  # "Section 379 in Act"
+                r'^the .+ act,',      # "The Indian Penal Code, 1860"
+                r'^article \d+ in.*constitution',  # "Article 25 in Constitution"
+                r'^schedule .+ to',   # "Schedule X to Act"
+            ]
+            import re as regex_module
+            for pattern in statute_patterns:
+                if regex_module.search(pattern, title.lower()):
+                    is_statute_page = True
+                    break
+        
+        if is_statute_page:
             print(f"\n   ⚠️  Skipping statute/section page: {title[:50]}...")
             return None
         

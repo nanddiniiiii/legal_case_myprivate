@@ -47,32 +47,22 @@ conn = psycopg2.connect(
 )
 cur = conn.cursor()
 
-# Enable pgvector extension
-print("Enabling pgvector extension...")
-try:
-    cur.execute("CREATE EXTENSION IF NOT EXISTS vector")
-    print("✅ pgvector extension enabled")
-    conn.commit()
-except Exception as e:
-    print(f"⚠️  pgvector extension error: {e}")
-    print("Trying to continue without pgvector...")
-    conn.rollback()
-
-# Create cases table
+# Create cases table with UNIQUE constraint on case_number
 cur.execute("""
     CREATE TABLE IF NOT EXISTS cases (
         id SERIAL PRIMARY KEY,
-        case_number TEXT,
+        case_number TEXT UNIQUE NOT NULL,
         title TEXT,
         parties TEXT,
         description TEXT,
         category TEXT,
         judgment_date TEXT,
         bench TEXT,
-        embedding vector(384)
+        embedding TEXT
     )
 """)
-print("✅ Cases table created")
+conn.commit()
+print("✅ Cases table created (with UNIQUE case_number constraint - embeddings as TEXT)")
 
 # Create users table
 cur.execute("""
