@@ -333,77 +333,30 @@ Total: 1813 with embeddings, 0 without
 
 ## 🌐 ngrok Tunnel Integration
 
-**Legal Search Pro** includes **ngrok** for instant public URL generation - perfect for demos, testing, and sharing without traditional deployment.
+**Legal Search Pro** includes **ngrok** for instant public HTTPS URLs. `ngrok.exe` is included in the repository.
 
-### What is ngrok?
-
-ngrok is a secure tunneling service that exposes your local Flask server to the internet:
-- ✅ Instant public HTTPS URL
-- ✅ No firewall configuration needed
-- ✅ Perfect for presentations and demos
-- ✅ 1.6GB/month bandwidth free tier (sufficient for demos)
-
-### Why Use ngrok?
-
-Instead of complex cloud deployment:
-```
-Traditional Way: Code → GitHub → Heroku → Deploy → Wait → Share URL
-ngrok Way:       Code → Run Flask → Run ngrok → Share URL (2 minutes!)
-```
-
-### How to Use ngrok
-
-**Already included in project:** `ngrok.exe` (Windows) is included in the repository
+### Quick Start
 
 **Terminal 1: Start API Server**
 ```bash
 python api.py
 ```
-Server runs on `http://localhost:5000`
 
 **Terminal 2: Expose with ngrok**
 ```bash
 .\ngrok.exe http 5000
 ```
 
-**Copy the forwarding URL:**
-```
-Forwarding: https://randomstring-123.ngrok.io -> http://localhost:5000
-```
+**Copy the forwarding URL** and access: `https://[ngrok-url]/DBMS%20UI/index.html`
 
-**Share this URL:** `https://randomstring-123.ngrok.io/DBMS%20UI/index.html`
+### Features
 
-### ngrok Features
-
-| Feature | Description |
-|---------|-------------|
+| Feature | Details |
+|---------|---------|
 | **Public HTTPS URL** | Automatically generated, valid for current session |
-| **Real-time Traffic Inspection** | Monitor requests at `http://localhost:4040` |
-| **HTTP/HTTPS Support** | Works with any protocol |
-| **Bandwidth** | Free tier: 1.6GB/month (sufficient for demos) |
-| **Session Duration** | 2-hour limit per free session (can restart) |
-| **No Authentication Required** | Works out of the box |
-
-### Accessing via ngrok
-
-**Frontend:**
-```
-https://randomstring-123.ngrok.io/DBMS%20UI/index.html
-```
-
-**API Calls:**
-```
-https://randomstring-123.ngrok.io/api/search?query=theft
-https://randomstring-123.ngrok.io/api/analytics
-```
-
-### ngrok Inspector (Optional)
-
-Monitor all requests in real-time:
-```
-http://localhost:4040
-```
-Shows all HTTP requests, responses, and timing - useful for debugging
+| **Real-time Inspection** | Monitor requests at `http://localhost:4040` |
+| **Bandwidth** | Free tier: 1.6GB/month |
+| **Session Duration** | 2-hour limit per free session |
 
 ---
 
@@ -505,11 +458,6 @@ Returns user's previous searches
 
 ### 🔍 Hybrid Semantic Search Algorithm
 
-**Why Hybrid?**
-- Pure keyword search misses related cases with different wording
-- Pure semantic search misses exact statutory references (e.g., "IPC 379")
-- **Hybrid approach balances both strengths**
-
 **Implementation:**
 1. Generate AI embedding for user query (768-dim vector)
 2. Calculate cosine similarity against all case embeddings
@@ -519,47 +467,29 @@ Returns user's previous searches
 
 ### 🧠 AI Embeddings (Sentence Transformers)
 
-**Model:** `all-mpnet-base-v2`
-- **Dimensions:** 768
-- **Training Data:** 215M sentence pairs
-- **Quality:** Superior semantic understanding vs. simpler models
-- **Speed:** Fast enough for real-time search
+**Model:** `all-mpnet-base-v2` (768-dimensional vectors)
 
 **Process:**
-1. Extract case description (first 5000 characters)
-2. Clean text (remove citations, extra whitespace)
-3. Generate 768-dimensional embedding
-4. Store as JSON string in PostgreSQL
-5. Search via cosine similarity
+1. Extract case description and clean text
+2. Generate 768-dimensional embedding
+3. Store as JSON string in PostgreSQL
+4. Search via cosine similarity
 
 ### 📊 Caching Layer
 
-**Types of Caching:**
 - **Search Cache:** 5-minute TTL for frequently repeated queries
 - **Analytics Cache:** 10-minute TTL for dashboard data
-- **Browser Cache:** localStorage for user preferences, sessionStorage for search state
+- **Browser Cache:** localStorage for preferences, sessionStorage for search state
 
-**Benefits:**
-- Reduces database load by 60%
-- Faster response times (<100ms for cached queries)
-- Smooth user experience
+**Benefits:** Reduces database load by ~60%, faster response times (<100ms cached)
 
 ### 🕷️ Web Scraper Features
 
-**What it scrapes:**
-- Case number, title, parties, full judgment text
-- Judgment date, court, judge information
-- 21 legal categories (theft, murder, property, etc.)
-
-**Filters:**
-- Skips statute/section definition pages
-- Only saves actual court judgments
+- Scrapes real cases from Indian Kanoon
+- 21 legal categories (500+ cases per category)
 - Deduplicates using UNIQUE constraint
-
-**Reliability:**
-- 2-second delay between requests (respectful to server)
-- Error handling for network issues
-- Can resume from interruptions
+- Generates AI embeddings automatically
+- Respects server rate limits (2-second delay)
 
 ---
 
